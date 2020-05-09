@@ -1,0 +1,159 @@
+<form #patientRegistration ="ngForm">
+
+  <mat-tab-group mat-align-tabs="center">
+    <mat-tab label="Patient Details">
+
+      <div class="container">
+        <br>
+        <mat-form-field>
+          <mat-label>Title</mat-label>
+          <mat-select name="title" #title="ngModel" [(ngModel)]="patient.Title" required>
+            <mat-option value="mr">Mr.</mat-option>
+            <mat-option value="ms">Mrs.</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br>
+
+        <mat-form-field style="width: 500px">
+          <mat-label>First Name</mat-label>
+          <input matInput name="firstname" #firstname="ngModel" [(ngModel)]="patient.FirstName" required>
+        </mat-form-field>
+        <br>
+
+        <mat-form-field style="width: 500px">
+          <mat-label>Middle Name</mat-label>
+          <input matInput name="middlename" [(ngModel)]="patient.MiddleName">
+        </mat-form-field>
+        <br>
+
+        <mat-form-field style="width: 500px">
+          <mat-label>Last Name</mat-label>
+          <input matInput name="lastname" #lastname="ngModel" [(ngModel)]="patient.LastName" required>
+        </mat-form-field>
+        <br>
+
+        <mat-form-field>
+          <mat-label>Date of Birth</mat-label>
+          <input matInput [max]="maxDate" [matDatepicker]="dob" name="dateofbirth" #dateofbirth="ngModel" [(ngModel)]="patient.DateOfBirth" required>
+          <mat-datepicker-toggle matSuffix [for]="dob"></mat-datepicker-toggle>
+          <mat-datepicker #dob></mat-datepicker>
+        </mat-form-field>
+        <br>
+
+        <mat-form-field>
+          <mat-label>Age</mat-label>
+          <input matInput id="age" name="age" #age="ngModel" appForbiddenValue [(ngModel)]="patient.Age" required>
+        </mat-form-field>
+        <mat-error *ngIf="age.errors?.forbiddenValue && age.dirty">Age should be greater than 0</mat-error>
+        <br>
+
+        <mat-form-field style="width: 500px">
+          <mat-label>Phone</mat-label>
+          <input matInput name="phone" #phone="ngModel" appForbiddenValue [(ngModel)]="patient.Phone" required>
+        </mat-form-field>
+        <mat-error *ngIf="phone.errors?.forbiddenValue && phone.dirty">Please enter numeric values only</mat-error>
+        <br>
+
+        <mat-form-field style="width: 500px">
+          <mat-label>Address</mat-label>
+          <input matInput name="address" #address="ngModel" [(ngModel)]="patient.Address">
+        </mat-form-field>
+        <br>
+
+      </div>
+    </mat-tab>
+
+
+    <mat-tab label="Test Details">
+      <div class="container">
+        <br>
+        <mat-form-field style="width: 500px">
+          <mat-label>Doctor Name</mat-label>
+          <input matInput name="doctorname" #doctorname="ngModel" [(ngModel)]="patient.DoctorName" required>
+        </mat-form-field>
+        <br>
+
+        
+          <mat-label>Test Details:  </mat-label>
+          <mat-checkbox style="margin:20px" name="malaria" [(ngModel)]="patient.Tests.Malaria">
+            Malaria
+          </mat-checkbox>
+          <mat-checkbox style="margin:20px" name="typhoid" [(ngModel)]="patient.Tests.Typhoid">
+            Typhoid
+          </mat-checkbox>
+        
+        <br>
+
+        <mat-form-field>
+          <mat-label>Bar Code</mat-label>
+          <input matInput name="barcode" [(ngModel)]="patient.BarCode" required>
+        </mat-form-field>
+        <br>
+      </div>
+    </mat-tab>
+
+
+
+    <mat-tab label="Payment Details">
+      <div class="container">
+        <br>
+        <mat-form-field>
+          <mat-label>Payment Mode</mat-label>
+          <mat-select name="paymentmode" #paymentmode="ngModel" [(ngModel)]="patient.Payment.PaymentMode" required>
+            <mat-option value="cash">Cash</mat-option>
+            <mat-option value="card">Card</mat-option>
+            <mat-option value="wallet">Paytm/PhonePay/GooglePay</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-error *ngIf="paymentmode.invalid && paymentmode.touched">Mandatory Field</mat-error>
+        <br>
+
+        <mat-form-field>
+          <mat-label>Total Amount (in Rs.)</mat-label>
+          <input matInput name="totalamount" #totalamount="ngModel" [(ngModel)]="patient.Payment.TotalAmount" required>
+        </mat-form-field>
+        <mat-error *ngIf="totalamount.invalid && totalamount.touched">Mandatory Field</mat-error>
+        <br>
+
+        <mat-form-field>
+          <mat-label>Discount (in %)</mat-label>
+          <input matInput name="discount" #discount="ngModel" [(ngModel)]="patient.Payment.Discount">
+        </mat-form-field>
+        <br>
+
+        <div>
+          <mat-label>Discount Amount = Rs.</mat-label> {{patient.Payment.DiscountAmount}}
+        </div>
+        <br>
+
+        <div>
+          <mat-label>Net Payable Amount = Rs.</mat-label> {{patient.Payment.NetAmount}}
+        </div>
+        <br>
+
+
+        <mat-form-field>
+          <mat-label>Paid Amount (in Rs)</mat-label>
+          <input matInput name="paidamount" #paidamount="ngModel" [(ngModel)]="patient.Payment.PaidAmount" required>
+        </mat-form-field>
+        <mat-error *ngIf="paidamount.invalid && paidamount.touched">Mandatory Field</mat-error>
+        <mat-error *ngIf="paidamount.touched && paidamount.value>patient.NetAmount">Paid Amount greater than Net Amount</mat-error>
+        <br>
+
+
+        <mat-label>Balance Amount = Rs.</mat-label> {{patient.Payment.BalanceAmount}}
+
+
+        <br>
+
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+
+</form>
+
+
+  <div class="fixedFooter">
+    <button mat-raised-button color="primary" (click)="SavePatient()" [disabled]="patientRegistration.form.invalid">Save Details</button>
+  </div>
+

@@ -1,0 +1,35 @@
+  <div class="container d-flex justify-content-center">
+    <div class="card vertical-center">
+      <div class="mx-auto">
+        <form #loginForm="ngForm">
+          <div class="card-title text-success" style="text-align:center; margin: 20px; font-size:larger">
+            Login Page
+          </div>
+          <div class="card-body">
+            <mat-form-field>
+              <mat-label>User Name</mat-label>
+              <input matInput name="username" #username="ngModel" [(ngModel)]="login.userName" required>
+            </mat-form-field>
+            <br />
+
+            <mat-form-field>
+              <mat-label>Password</mat-label>
+              <input matInput name="password" #password="ngModel" [(ngModel)]="login.password" required [type]="hide ? 'password' : 'text'">
+              <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+            </mat-form-field>
+            <br />
+            <br />
+            <div style="text-align:center">
+              <button mat-raised-button color="primary" (click)="onSubmit(loginForm)" [disabled]="loginForm.form.invalid">Login</button>
+            </div>
+          </div>
+        </form>
+        <br />
+      </div>
+      <div *ngIf="loginFail" class="text-danger" style="text-align:center; margin:20px; font-size:larger">Invalid Credentials</div>
+    </div>
+  </div>
+
+

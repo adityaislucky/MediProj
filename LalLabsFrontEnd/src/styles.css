@@ -1,0 +1,57 @@
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.fixedFooter {
+  width: 100%;
+  position: fixed;
+  padding: 10px 0;
+  bottom: 30px;
+  text-align: center;
+}
+
+.example-card {
+  max-width: 400px;
+}
+
+.example-header-image {
+  background-image: url("/assets/Rustin_Cohle.jpg");
+  background-size: cover;
+}
+
+mat-row.example-detail-row {
+  height: 0px;
+}
+
+mat-row.example-element-row:not(.example-expanded-row):hover {
+  background: whitesmoke;
+}
+
+mat-row.example-element-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
+
+.example-element-row mat-cell{
+  border-bottom-width: 0;
+}
+
+.example-element-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.example-element-description {
+  padding: 16px;
+}
+
+.example-element-description-attribution {
+  opacity: 0.5;
+}
