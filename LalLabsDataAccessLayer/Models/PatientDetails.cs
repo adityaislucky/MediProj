@@ -14,7 +14,7 @@ namespace LalLabsDataAccessLayer.Models
 
     public class PatientDetails
     {
-        public string PatientId { get; set; }
+        public long PatientId { get; set; }
 
         public string Title { get; set; }
 

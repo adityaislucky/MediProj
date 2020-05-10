@@ -39,5 +39,8 @@ export class PatientGridComponent implements OnInit {
     
   }
 
+  UpdatePatient(PatientId: number) {
+    this._route.navigate(['patientRegistration', PatientId]);
+  }
 }
 
