@@ -21,5 +21,4 @@ export class PatientDetails {
   public AddedBy: string;
   public CreatedOn: Date;
   public ModifiedOn: Date;
-
 }
