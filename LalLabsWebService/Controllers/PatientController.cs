@@ -47,5 +47,26 @@ namespace LalLabsWebService.Controllers
 
             return null;
         }
+
+        [HttpGet]
+        public DataTable GetPatient(string PatientId)
+        {
+            try
+            {
+                long patientId = long.Parse(PatientId);
+                DataAccessLayer obj = new DataAccessLayer();
+                DataTable dt = obj.GetPatient(patientId);
+                return dt;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine("Error Generated. Details: " + e.ToString());
+            }
+
+            return null;
+        }
+
     }
+    
 }

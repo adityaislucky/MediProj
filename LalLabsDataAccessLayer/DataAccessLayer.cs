@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.CodeDom;
 using LalLabsDataAccessLayer.Models;
+using Microsoft.SqlServer.Server;
 
 namespace LalLabsDataAccessLayer
 {
@@ -160,5 +161,29 @@ namespace LalLabsDataAccessLayer
 			return null;
 		}
 
+		public DataTable GetPatient(long PatientId)
+		{
+			cmdLalLabs = new SqlCommand("GetPatient", conLalLabs);
+			try
+			{
+				conLalLabs.Open();
+				cmdLalLabs.CommandType = CommandType.StoredProcedure;
+				cmdLalLabs.Parameters.AddWithValue("@PatientId", PatientId);
+				SqlDataAdapter da = new SqlDataAdapter(cmdLalLabs);
+				DataTable dt = new DataTable();
+				da.Fill(dt);
+				return dt;
+			}
+			catch (SqlException e)
+			{
+				Console.WriteLine("Error Generated. Details: " + e.ToString());
+			}
+			finally
+			{
+				conLalLabs.Close();
+			}
+			return null;
+		}
 	}
+	
 }

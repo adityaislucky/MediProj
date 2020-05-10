@@ -153,7 +153,9 @@
 </form>
 
 
-  <div class="fixedFooter">
+  <div *ngIf="!mode" class="fixedFooter">
     <button mat-raised-button color="primary" (click)="SavePatient()" [disabled]="patientRegistration.form.invalid">Save Details</button>
   </div>
-
+  <div *ngIf="mode" class="fixedFooter">
+    <button mat-raised-button color="primary" (click)="SavePatient()" [disabled]="patientRegistration.form.invalid">Update Details</button>
+  </div>
