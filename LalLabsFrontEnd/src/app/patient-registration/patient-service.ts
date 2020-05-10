@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { throwError } from 'rxjs';
+import { throwError, Observable } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { PatientDetails } from './patient-details';
+import { GetPatientDetails } from '../models/get-patient-details';
 
 
 @Injectable()
@@ -13,11 +14,16 @@ export class PatientService {
   constructor(private _http: HttpClient) { }
 
   SavePatient(patient: PatientDetails) {
-
     return this._http.post(this.endpoint, patient).pipe(
       catchError(this.handleError)
     );
+  }
 
+  GetPatient(PatientId: number): Observable<GetPatientDetails[]> {
+    let param = new HttpParams().set('PatientId', PatientId.toString());
+    return this._http.get<GetPatientDetails[]>(this.endpoint, { params: param }).pipe(
+      catchError(this.handleError)
+    );
   }
 
 

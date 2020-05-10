@@ -12,6 +12,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'admin', component: AdminComponent },
   { path: 'patientRegistration', component: PatientRegistrationComponent },
+  { path: 'patientRegistration/:id', component: PatientRegistrationComponent },
   { path: 'welcome', component: WelcomeComponent },
   { path: 'pageNotFound', component: PageNotFoundComponent },
   { path: 'patientGrid', component: PatientGridComponent },
