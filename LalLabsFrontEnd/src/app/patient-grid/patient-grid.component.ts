@@ -19,6 +19,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
   ],
   
 })
+  //for change
 export class PatientGridComponent implements OnInit {
 
   dataSource = new MatTableDataSource<PatientDetails>();
