@@ -47,6 +47,7 @@ export class PatientGridComponent implements OnInit {
   UpdatePatient(PatientId: number) {
     this._route.navigate(['patientRegistration', PatientId]);
   }
+  
 
   isAllSelected() {
     const numSelected = this.selection.selected.length;
@@ -83,6 +84,5 @@ export class PatientGridComponent implements OnInit {
     }
   }
 
-  
 }
 
