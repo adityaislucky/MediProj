@@ -30,6 +30,7 @@ import { PatientGridComponent } from './patient-grid/patient-grid.component';
 import { PatientGridService } from './patient-grid/patient-grid.service';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRippleModule } from '@angular/material/core';
 
 @NgModule({
@@ -66,7 +67,8 @@ import { MatRippleModule } from '@angular/material/core';
     MatDialogModule,
     MatTableModule,
     MatPaginatorModule,
-    MatRippleModule
+    MatRippleModule,
+    MatSnackBarModule
   ],
   providers: [LoginService, PatientService, PatientGridService],
   bootstrap: [AppComponent]

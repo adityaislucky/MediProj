@@ -4,7 +4,7 @@
 
       <!-- PatientId Column -->
       <ng-container matColumnDef="PatientId">
-        <mat-header-cell *matHeaderCellDef> PatientId </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef> Registration Number </mat-header-cell>
         <mat-cell *matCellDef="let PatientDetails"> {{PatientDetails.PatientId}} </mat-cell>
       </ng-container>
 
@@ -18,6 +18,12 @@
       <ng-container matColumnDef="LastName">
         <mat-header-cell *matHeaderCellDef> Last Name </mat-header-cell>
         <mat-cell *matCellDef="let PatientDetails"> {{PatientDetails.LastName}} </mat-cell>
+      </ng-container>
+
+      <!-- MergeName Column -->
+      <ng-container matColumnDef="mergedField">
+        <mat-header-cell *matHeaderCellDef> Patient Name </mat-header-cell>
+        <mat-cell *matCellDef="let PatientDetails"> {{PatientDetails.FirstName}} {{PatientDetails.LastName}} </mat-cell>
       </ng-container>
 
       <!-- Phone Column -->
@@ -41,22 +47,42 @@
       <!-- BalanceAmount Column -->
       <ng-container matColumnDef="BalanceAmount">
         <mat-header-cell *matHeaderCellDef> Balance Amount </mat-header-cell>
-        <mat-cell *matCellDef="let PatientDetails" [ngStyle]="{'background-color': PatientDetails.BalanceAmount>0 ? 'coral' : 'white'}"> {{PatientDetails.BalanceAmount}} </mat-cell>
+        <mat-cell *matCellDef="let PatientDetails" style="justify-content:center; text-align:center" [ngStyle]="{'background-color': PatientDetails.BalanceAmount>0 ? 'red' : 'green'}"> {{PatientDetails.BalanceAmount}} </mat-cell>
+      </ng-container>
+
+      <!-- CheckBox Column-->
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef style="justify-content:center; text-align:center">
+          <mat-checkbox (change)="$event ? masterToggle() : null"
+                        [checked]="selection.hasValue() && isAllSelected()"
+                        [indeterminate]="selection.hasValue() && !isAllSelected()"
+                        [aria-label]="checkboxLabel()">
+          </mat-checkbox>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" style="justify-content:center; text-align:center">
+          <mat-checkbox (click)="$event.stopPropagation()"
+                        (change)="$event ? selection.toggle(row) : null"
+                        [checked]="selection.isSelected(row)"
+                        [aria-label]="checkboxLabel(row)"
+                        [(ngModel)]="row.Checked">
+          </mat-checkbox>
+        </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="expandedDetail">
         <mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length" class="example-element-detail"
-                [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-              {{element.CreatedOn}}
+                  [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+          {{element.CreatedOn}}
+       
           <button mat-raised-button color="primary" (click)="UpdatePatient(element.PatientId)">Update Patient</button>
         </mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
       <mat-row *matRowDef="let element; columns: columnsToDisplay;"
-          class="example-element-row"
-          [class.example-expanded-row]="expandedElement === element"
-          (click)="expandedElement = expandedElement === element ? null : element">
+               class="example-element-row"
+               [class.example-expanded-row]="expandedElement === element"
+               (click)="expandedElement = expandedElement === element ? null : element">
       </mat-row>
       <mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></mat-row>
 
@@ -69,4 +95,7 @@
     </mat-paginator>
 
   </div>
+</div>
+<div style="margin:20px">
+  <button mat-raised-button color="primary" (click)="checkboxResult()">Message Patients</button>
 </div>

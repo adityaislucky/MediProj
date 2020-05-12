@@ -27,6 +27,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   background-size: cover;
 }
 
+
+
 mat-row.example-detail-row {
   height: 0px;
 }
