@@ -73,6 +73,7 @@
         <mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length" class="example-element-detail"
                   [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
           {{element.CreatedOn}}
+       
           <button mat-raised-button color="primary" (click)="UpdatePatient(element.PatientId)">Update Patient</button>
         </mat-cell>
       </ng-container>
