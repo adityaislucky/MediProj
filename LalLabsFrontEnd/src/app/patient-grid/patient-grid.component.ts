@@ -7,7 +7,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 
 @Component({
   selector: 'app-patient-grid',
@@ -30,7 +29,6 @@ export class PatientGridComponent implements OnInit {
   columnsToDisplay = ['PatientId', 'mergedField','FirstName', 'LastName', 'Phone', 'DoctorName', 'TotalAmount', 'BalanceAmount', 'select'];
   expandedElement: PatientDetails | null;
   selection = new SelectionModel<PatientDetails>(true, []);
-  patientDetailsArray: PatientDetails[];
   phoneArray: number[];
   constructor(private _patientService: PatientGridService, private _route: Router, private _snackBar: MatSnackBar) { }
 
@@ -41,7 +39,6 @@ export class PatientGridComponent implements OnInit {
     this._patientService.PatientGrid(sessionStorage.getItem("userName")).subscribe(data => {
       this.dataSource.data = data;
       this.dataSource.paginator = this.paginator;
-      this.patientDetailsArray = data;
 
     })
     
