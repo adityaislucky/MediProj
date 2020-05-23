@@ -14,14 +14,14 @@ export class PatientService {
   constructor(private _http: HttpClient) { }
 
   SavePatient(patient: PatientDetails) {
-    return this._http.post(this.endpoint, patient).pipe(
+    return this._http.post(this.endpoint+'/SavePatient', patient).pipe(
       catchError(this.handleError)
     );
   }
 
   GetPatient(PatientId: number): Observable<GetPatientDetails[]> {
     let param = new HttpParams().set('PatientId', PatientId.toString());
-    return this._http.get<GetPatientDetails[]>(this.endpoint, { params: param }).pipe(
+    return this._http.get<GetPatientDetails[]>(this.endpoint+'/GetPatient', { params: param }).pipe(
       catchError(this.handleError)
     );
   }

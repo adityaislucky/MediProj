@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { throwError, Observable } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
-import { PatientDetails } from './patient-details';
+import { GetPatientDetails } from '../models/get-patient-details';
 
 @Injectable()
 export class PatientGridService {
@@ -11,9 +11,9 @@ export class PatientGridService {
 
   constructor(private _http: HttpClient) { }
 
-  PatientGrid(AddedBy: string): Observable<PatientDetails[]> {
+  PatientGrid(AddedBy: string): Observable<GetPatientDetails[]> {
     let param = new HttpParams().set('AddedBy', AddedBy);
-    return this._http.get<PatientDetails[]>(this.endpoint, { params: param }).pipe(
+    return this._http.get<GetPatientDetails[]>(this.endpoint + '/PatientGrid', { params: param }).pipe(
       catchError(this.handleError)
     );
 

@@ -96,7 +96,13 @@ namespace LalLabsDataAccessLayer
 				cmdLalLabs.Parameters.AddWithValue("@Age", patient.Age);
 				cmdLalLabs.Parameters.AddWithValue("@Phone", patient.Phone);
 				cmdLalLabs.Parameters.AddWithValue("@PAddress", patient.Address);
+				cmdLalLabs.Parameters.AddWithValue("@Email", patient.Email);
 				cmdLalLabs.Parameters.AddWithValue("@DoctorName", patient.DoctorName);
+				cmdLalLabs.Parameters.AddWithValue("@HomeCollection", patient.Home);
+				cmdLalLabs.Parameters.AddWithValue("@CollectionDate", patient.HomeCollection.CollectionDate);
+				cmdLalLabs.Parameters.AddWithValue("@CollectedBy", patient.HomeCollection.CollectedBy);
+				cmdLalLabs.Parameters.AddWithValue("@CollectionCharges", patient.HomeCollection.CollectionCharges);
+				cmdLalLabs.Parameters.AddWithValue("@CollectionAddress", patient.HomeCollection.CollectionAddress);
 				cmdLalLabs.Parameters.AddWithValue("@Malaria", patient.Tests.Malaria);
 				cmdLalLabs.Parameters.AddWithValue("@Typhoid", patient.Tests.Typhoid);
 				cmdLalLabs.Parameters.AddWithValue("@Barcode", patient.Barcode);
@@ -184,6 +190,104 @@ namespace LalLabsDataAccessLayer
 			}
 			return null;
 		}
+
+		public DataTable GetTestPrice()
+		{
+			cmdLalLabs = new SqlCommand("GetTestPrice", conLalLabs);
+			DataTable dt = new DataTable();
+			try
+			{
+				conLalLabs.Open();
+				cmdLalLabs.CommandType = CommandType.StoredProcedure;
+				SqlDataAdapter da = new SqlDataAdapter(cmdLalLabs);
+				da.Fill(dt);
+				return dt;
+			}
+			catch (SqlException e)
+			{
+				Console.WriteLine("Error Generated. Details: " + e.ToString());
+			}
+			finally
+			{
+				conLalLabs.Close();
+			}
+			return null;
+		}
+
+		public DataTable GetAllPhones()
+		{
+			cmdLalLabs = new SqlCommand("GetAllPhones", conLalLabs);
+			DataTable dt = new DataTable();
+			try
+			{
+				conLalLabs.Open();
+				cmdLalLabs.CommandType = CommandType.StoredProcedure;
+				SqlDataAdapter da = new SqlDataAdapter(cmdLalLabs);
+				da.Fill(dt);
+				return dt;
+			}
+			catch (SqlException e)
+			{
+				Console.WriteLine("Error Generated. Details: " + e.ToString());
+			}
+			finally
+			{
+				conLalLabs.Close();
+			}
+			return null;
+		}
+
+		public DataTable GetPatientByPhone(string phone)
+		{
+			cmdLalLabs = new SqlCommand("GetPatientByPhone", conLalLabs);
+			try
+			{
+				conLalLabs.Open();
+				cmdLalLabs.CommandType = CommandType.StoredProcedure;
+				cmdLalLabs.Parameters.AddWithValue("@Phone", phone);
+				SqlDataAdapter da = new SqlDataAdapter(cmdLalLabs);
+				DataTable dt = new DataTable();
+				da.Fill(dt);
+				return dt;
+			}
+			catch (SqlException e)
+			{
+				Console.WriteLine("Error Generated. Details: " + e.ToString());
+			}
+			finally
+			{
+				conLalLabs.Close();
+			}
+			return null;
+		}
+
+		public string GetUserRole(string UserName, string UserPassword)
+		{
+			cmdLalLabs = new SqlCommand("GetUserRole", conLalLabs);
+			try
+			{
+
+				conLalLabs.Open();
+				cmdLalLabs.CommandType = CommandType.StoredProcedure;
+				cmdLalLabs.Parameters.AddWithValue("@UserName", UserName);
+				cmdLalLabs.Parameters.AddWithValue("@UserPassword", UserPassword);
+
+				SqlParameter UserRole = cmdLalLabs.Parameters.Add("@UserRole", SqlDbType.NVarChar, 100);
+				UserRole.Direction = ParameterDirection.Output;
+				cmdLalLabs.ExecuteNonQuery();
+				return UserRole.Value.ToString();
+			}
+			catch (SqlException e)
+			{
+				Console.WriteLine("Error Generated. Details: " + e.ToString());
+			}
+			finally
+			{
+				conLalLabs.Close();
+			}
+			return null;
+		}
+	
 	}
 	
 }

@@ -34,6 +34,10 @@ export class LoginComponent {
   reRoute(status) {
 
     if (status == true) {
+      this._loginService.GetUserRole(this.login).subscribe(data => {
+        let userRole = data;
+        sessionStorage.setItem("userRole", userRole);
+      });
       this.isLoggedIn = "true";
       sessionStorage.setItem("isLoggedIn", this.isLoggedIn);
       sessionStorage.setItem("userName", this.login.userName);

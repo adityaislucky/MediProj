@@ -20,7 +20,7 @@
         <mat-cell *matCellDef="let PatientDetails" [style.display]="'none'"> {{PatientDetails.LastName}} </mat-cell>
       </ng-container>
 
-      <!-- LastName Column -->
+      <!-- PatientName Column -->
       <ng-container matColumnDef="mergedField">
         <mat-header-cell *matHeaderCellDef> Patient Name </mat-header-cell>
         <mat-cell *matCellDef="let PatientDetails"> {{PatientDetails.FirstName}} {{PatientDetails.LastName}} </mat-cell>
@@ -70,11 +70,11 @@
         </mat-cell>
       </ng-container>
 
+      <!-- Expanded Column -->
       <ng-container matColumnDef="expandedDetail">
         <mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length" class="example-element-detail"
                   [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
           {{element.CreatedOn}}
-       
           <button mat-raised-button color="primary" (click)="UpdatePatient(element.PatientId)">Update Patient</button>
         </mat-cell>
       </ng-container>
@@ -90,7 +90,7 @@
     </table>
 
     <mat-paginator [length]="100"
-                   [pageSize]="10"
+                   [pageSize]="5"
                    [pageSizeOptions]="[5, 10, 25, 50, 100]"
                    showFirstLastButtons>
     </mat-paginator>
@@ -98,5 +98,5 @@
   </div>
 </div>
 <div style="margin:20px">
-  <button mat-raised-button color="primary" (click)="checkboxResult()">Message Patients</button>
+  <button mat-raised-button color="primary" [disabled]="!selection.selected.length" (click)="checkboxResult()">Message Patients</button>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild} from '@angular/core';
 import { PatientGridService } from './patient-grid.service';
 import { PatientDetails } from './patient-details';
 import { Router } from '@angular/router';
@@ -6,7 +6,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-patient-grid',
@@ -14,15 +13,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: './patient-grid.component.html',
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('collapsed', style({ height: '0px', minHeight: '0'})),
       state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
   
 })
-  //for change
-export class PatientGridComponent implements OnInit {
+//for change
+export class PatientGridComponent implements OnInit{
 
   dataSource = new MatTableDataSource<PatientDetails>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -30,24 +29,20 @@ export class PatientGridComponent implements OnInit {
   expandedElement: PatientDetails | null;
   selection = new SelectionModel<PatientDetails>(true, []);
   phoneArray: number[];
-  constructor(private _patientService: PatientGridService, private _route: Router, private _snackBar: MatSnackBar) { }
+  constructor(private _patientService: PatientGridService, private _route: Router) { }
 
   ngOnInit() {
-
     if (!(sessionStorage.getItem("isLoggedIn")))
       this._route.navigate(['login'], { replaceUrl: true });
     this._patientService.PatientGrid(sessionStorage.getItem("userName")).subscribe(data => {
       this.dataSource.data = data;
       this.dataSource.paginator = this.paginator;
-
     })
-    
   }
 
   UpdatePatient(PatientId: number) {
     this._route.navigate(['patientRegistration', PatientId]);
   }
-  
 
   isAllSelected() {
     const numSelected = this.selection.selected.length;
@@ -75,14 +70,8 @@ export class PatientGridComponent implements OnInit {
     for (var patient of this.selection.selected)
       this.phoneArray.push(patient.Phone);
     console.log(this.phoneArray);
-    if (this.phoneArray.length == 0) {
-      var message = "No Patient Selected ..!!";
-      var action = "Close";
-      this._snackBar.open(message, action,{
-          duration: 2000,
-        });
-    }
   }
 
+  
 }
 

@@ -19,17 +19,14 @@ namespace LalLabsDataAccessLayer
             //TestConnection();
             //LoginValidation("vivek", "Vivek@1989");
             /*PatientDetails patient = new PatientDetails();
-            patient.Title = "Mr";
+            patient.Title = "Mr.";
             patient.FirstName = "Aditya";
-            patient.MiddleName = "";
-            patient.LastName = "Dubey";
-            patient.DateOfBirth = DateTime.Parse("Mon Sep 29 1997 00:00:00");
-            patient.Age = 24;
-            patient.Phone = 9045626155;
-            patient.Address = "";
+            patient.LastName = "Tiwari";
+            patient.DateOfBirth = DateTime.Today;
+            patient.Age = "22Years 05Months 21Days";
+            patient.Phone = "9808842052";
             patient.DoctorName = "Sanjeev Kumar";
             patient.Tests.Malaria = true;
-            patient.Tests.Typhoid = false;
             patient.Barcode = "a123bc";
             patient.Payment.PaymentMode = "cash";
             patient.Payment.TotalAmount = 100;
@@ -39,14 +36,15 @@ namespace LalLabsDataAccessLayer
             patient.Payment.PaidAmount = 50;
             patient.Payment.BalanceAmount = 40;
             patient.AddedBy = "vivek";
-            patient.CreatedOn = DateTime.Parse("Mon Sep 01 1997 00:00:00");
-            patient.ModifiedOn = DateTime.Parse("Wed Sep 10 1997 00:00:00");
+            patient.CreatedOn = DateTime.Today;
+            patient.ModifiedOn = DateTime.Today;
             long PatientId = SavePatient(patient);
-            Console.WriteLine(PatientId);
-            */
+            Console.WriteLine(PatientId);*/
+
 
             //PatientGrid("vivek");
 
+            GetUserRole("vivek", "Vivek@1989");
         }
 
         public void TestConnection()
@@ -76,6 +74,13 @@ namespace LalLabsDataAccessLayer
             DataTable dt = new DataTable();
             dt = obj.PatientGrid(AddedBy);
             return dt;
+        }
+
+        public static void GetUserRole(string UserName, string UserPassword)
+        {
+            DataAccessLayer obj = new DataAccessLayer();
+            string UserRole = obj.GetUserRole(UserName, UserPassword);
+            Console.WriteLine(UserRole);
         }
     }
 

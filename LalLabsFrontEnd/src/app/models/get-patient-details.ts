@@ -7,11 +7,17 @@ export class GetPatientDetails {
   public MiddleName?: string;
   public LastName: string;
   public DateOfBirth: Date;
-  public Age: number;
-  public Phone: number;
+  public Age: string;
+  public Phone: string;
   public Address?: string;
+  public Email?: string;
   public Barcode: string;
   public DoctorName: string;
+  public HomeCollection: boolean;
+  public CollectionDate: Date;
+  public CollectedBy: string;
+  public CollectionCharges: number;
+  public CollectionAddress: string;
   public AddedBy: string;
   public CreatedOn: Date;
   public ModifiedOn: Date;
@@ -24,5 +30,4 @@ export class GetPatientDetails {
   public BalanceAmount: number;
   public Discount: number;
   public DiscountAmount: number;
-
 }
