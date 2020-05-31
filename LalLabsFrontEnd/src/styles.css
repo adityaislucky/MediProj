@@ -14,7 +14,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   width: 100%;
   position: fixed;
   padding: 10px 0;
-  bottom: 30px;
+  bottom: 15px;
   text-align: center;
 }
 
@@ -27,33 +27,3 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   background-size: cover;
 }
 
-
-
-mat-row.example-detail-row {
-  height: 0px;
-}
-
-mat-row.example-element-row:not(.example-expanded-row):hover {
-  background: whitesmoke;
-}
-
-mat-row.example-element-row:not(.example-expanded-row):active {
-  background: #efefef;
-}
-
-.example-element-row mat-cell{
-  border-bottom-width: 0;
-}
-
-.example-element-detail {
-  overflow: hidden;
-  display: flex;
-}
-
-.example-element-description {
-  padding: 16px;
-}
-
-.example-element-description-attribution {
-  opacity: 0.5;
-}

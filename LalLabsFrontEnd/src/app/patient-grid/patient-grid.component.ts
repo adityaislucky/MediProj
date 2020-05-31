@@ -1,13 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild} from '@angular/core';
 import { PatientGridService } from './patient-grid.service';
-import { PatientDetails } from './patient-details';
 import { Router } from '@angular/router';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Message } from '@angular/compiler/src/i18n/i18n_ast';
+import { PatientDetails } from './patient-details';
 
 @Component({
   selector: 'app-patient-grid',
@@ -15,42 +13,50 @@ import { Message } from '@angular/compiler/src/i18n/i18n_ast';
   templateUrl: './patient-grid.component.html',
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('collapsed', style({ height: '0px', minHeight: '0'})),
       state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
   
 })
-  //for change
-export class PatientGridComponent implements OnInit {
+
+export class PatientGridComponent implements OnInit{
 
   dataSource = new MatTableDataSource<PatientDetails>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  columnsToDisplay = ['PatientId', 'mergedField','FirstName', 'LastName', 'Phone', 'DoctorName', 'TotalAmount', 'BalanceAmount', 'select'];
+  columnsToDisplay = ['PatientId', 'mergedField', 'FirstName', 'LastName', 'Phone', 'Age', 'Barcode', 'DoctorName', 'TotalAmount', 'BalanceAmount', 'select'];
   expandedElement: PatientDetails | null;
   selection = new SelectionModel<PatientDetails>(true, []);
-  patientDetailsArray: PatientDetails[];
-  phoneArray: number[];
-  constructor(private _patientService: PatientGridService, private _route: Router, private _snackBar: MatSnackBar) { }
+  phoneArray: string[];
+  admin = false;
+  constructor(private _patientService: PatientGridService, private _route: Router) { }
 
   ngOnInit() {
-
     if (!(sessionStorage.getItem("isLoggedIn")))
       this._route.navigate(['login'], { replaceUrl: true });
     this._patientService.PatientGrid(sessionStorage.getItem("userName")).subscribe(data => {
       this.dataSource.data = data;
       this.dataSource.paginator = this.paginator;
-      this.patientDetailsArray = data;
-
+      if (sessionStorage.getItem('userRole') != 'admin') {
+        this.maskValues();
+      }
+      else {
+        this.admin = true;
+      }
+      this.displayAge();
     })
-    
+  }
+
+  maskValues() {
+    for (var temp of this.dataSource.data) {
+      temp.Phone = temp.Phone.replace(/\d(?!\d{0,3}$)/gi, "X");
+    }
   }
 
   UpdatePatient(PatientId: number) {
     this._route.navigate(['patientRegistration', PatientId]);
   }
-  
 
   isAllSelected() {
     const numSelected = this.selection.selected.length;
@@ -75,17 +81,46 @@ export class PatientGridComponent implements OnInit {
 
   checkboxResult() {
     this.phoneArray = [];
-    for (var patient of this.selection.selected)
-      this.phoneArray.push(patient.Phone);
-    console.log(this.phoneArray);
-    if (this.phoneArray.length == 0) {
-      var message = "No Patient Selected ..!!";
-      var action = "Close";
-      this._snackBar.open(message, action,{
-          duration: 2000,
-        });
+    if (sessionStorage.getItem('userRole') != 'admin') {
+      let tempArray = [];
+      for (var patient of this.selection.selected) {
+        tempArray.push(patient.PatientId);
+      }
+      var tempDataSource = new MatTableDataSource<PatientDetails>();
+      this._patientService.PatientGrid(sessionStorage.getItem("userName")).subscribe(data => {
+        tempDataSource.data = data;
+        for (var patient of tempDataSource.data) {
+          if (tempArray.indexOf(patient.PatientId)>=0) {
+            this.phoneArray.push(patient.Phone);
+          }
+        }
+        console.log(this.phoneArray);
+      });
+    }
+    else {
+      for (var patient of this.selection.selected)
+        this.phoneArray.push(patient.Phone);
+      console.log(this.phoneArray);
     }
   }
 
+  displayAge() {
+    /*for (var temp of this.dataSource.data) {
+      var age = temp.Age.split(" ");
+      var years = age[0];
+      var months = age[1];
+      var days = age[2];
+      if (years == "0Years") {
+        if (months == "0Months") {
+          temp.Age = days;
+        }
+        else
+          temp.Age = months;
+      }
+      else
+        temp.Age = years;
+    }
+    */
+  }
 }
 

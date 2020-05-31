@@ -7,19 +7,23 @@ import { Login } from './Login';
 @Injectable()
 export class LoginService {
 
-  endpoint = 'http://localhost:64878/api/login';
+  endpoint = 'http://localhost:64878/api/login/';
   
   constructor(private _http: HttpClient) { }
 
-  LoginValidation(login: Login){
-
-
+  LoginValidation(login: Login) {
     let param= new HttpParams().set('userName', login.userName).set('password', login.password);
-
-    return this._http.get<boolean>(this.endpoint, { params: param }).pipe(
+    return this._http.get<boolean>(this.endpoint + 'LoginValidation', { params: param }).pipe(
       catchError(this.handleError)
     );
 
+  }
+
+  GetUserRole(login: Login) {
+    let param = new HttpParams().set('userName', login.userName).set('password', login.password);
+    return this._http.get<string>(this.endpoint + 'GetUserRole', { params: param }).pipe(
+      catchError(this.handleError)
+    );
   }
 
 

@@ -1,5 +1,7 @@
-//model for tests
+//model for test details
 export class TestDetails {
-  public Malaria: Boolean;
-  public Typhoid: Boolean;
+  TestId: number;
+  TestName: string;
+  TestPrice: number;
+  TestCode: string;
 }

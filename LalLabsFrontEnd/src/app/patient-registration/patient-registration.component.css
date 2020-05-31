@@ -1,0 +1,25 @@
+.mat-radio-button ~ .mat-radio-button {
+  margin-left: 10px;
+}
+
+.mat-radio-button {
+  margin:10px;
+}
+
+
+table {
+  width: 100%;
+}
+
+.mat-header-cell {
+  background-color: snow;
+  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.row {
+  display: flex;
+}
+
+.column {
+  flex: 50%;
+}

@@ -3,25 +3,29 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { throwError, Observable } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { PatientDetails } from './patient-details';
-import { GetPatientDetails } from '../models/get-patient-details';
-
 
 @Injectable()
 export class PatientService {
 
-  endpoint = 'http://localhost:64878/api/patient';
+  endpoint = 'http://localhost:64878/api/patient/';
 
   constructor(private _http: HttpClient) { }
 
   SavePatient(patient: PatientDetails) {
-    return this._http.post(this.endpoint, patient).pipe(
+    return this._http.post(this.endpoint+'SavePatient', patient).pipe(
       catchError(this.handleError)
     );
   }
 
-  GetPatient(PatientId: number): Observable<GetPatientDetails[]> {
+  UpdatePatient(patient: PatientDetails) {
+    return this._http.post(this.endpoint + 'UpdatePatient', patient).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  GetPatient(PatientId: number): Observable<PatientDetails> {
     let param = new HttpParams().set('PatientId', PatientId.toString());
-    return this._http.get<GetPatientDetails[]>(this.endpoint, { params: param }).pipe(
+    return this._http.get<PatientDetails>(this.endpoint + 'GetPatient', { params: param }).pipe(
       catchError(this.handleError)
     );
   }

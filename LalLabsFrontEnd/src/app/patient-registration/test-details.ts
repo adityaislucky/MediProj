@@ -1,7 +1,7 @@
 //model for test details
 export class TestDetails {
-
-  Malaria: boolean;
-  Typhoid: boolean;
-
+  TestId: number;
+  TestName: string;
+  TestPrice: number;
+  TestCode: string;
 }

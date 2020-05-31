@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -32,6 +32,16 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRippleModule } from '@angular/material/core';
+import { NgxPopper } from 'angular-popper';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { TestService } from './patient-registration/test-service';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatRadioModule } from '@angular/material/radio';
+import { PhoneService } from './patient-registration/phone-service';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { TestManagementComponent } from './test-management/test-management.component';
+import { TestManagementService } from './test-management/test-management.service';
+import { DialogTestManagementComponent } from './dialog-test-management/dialog-test-management.component';
 
 @NgModule({
   declarations: [
@@ -44,13 +54,16 @@ import { MatRippleModule } from '@angular/material/core';
     WelcomeComponent,
     PageNotFoundComponent,
     DialogSavePatientComponent,
-    PatientGridComponent
+    PatientGridComponent,
+    TestManagementComponent,
+    DialogTestManagementComponent
   ],
-  entryComponents: [DialogSavePatientComponent],
+  entryComponents: [DialogSavePatientComponent, DialogTestManagementComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
     MatTabsModule,
@@ -68,9 +81,14 @@ import { MatRippleModule } from '@angular/material/core';
     MatTableModule,
     MatPaginatorModule,
     MatRippleModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    NgxPopper,
+    MatExpansionModule,
+    MatMenuModule,
+    MatRadioModule,
+    MatAutocompleteModule
   ],
-  providers: [LoginService, PatientService, PatientGridService],
+  providers: [LoginService, PatientService, PatientGridService, TestService, PhoneService, TestManagementService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

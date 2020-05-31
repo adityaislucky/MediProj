@@ -5,61 +5,140 @@
 
       <div class="container">
         <br>
-        <mat-form-field>
-          <mat-label>Title</mat-label>
-          <mat-select name="title" #title="ngModel" [(ngModel)]="patient.Title" required>
-            <mat-option value="mr">Mr.</mat-option>
-            <mat-option value="ms">Mrs.</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <br>
 
-        <mat-form-field style="width: 500px">
-          <mat-label>First Name</mat-label>
-          <input matInput name="firstname" #firstname="ngModel" [(ngModel)]="patient.FirstName" required>
-        </mat-form-field>
-        <br>
+        <div class="row">
+          <div class="column">
+            <mat-form-field style="width: 500px">
+              <mat-label>Phone</mat-label>
+              <input type="text" matInput [formControl]="myControl" (keyup)="phoneChange(patientRegistration)" [matAutocomplete]="auto" required pattern="^[0-9]{1,10}$">
+              <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                  {{option}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+            <br>
 
-        <mat-form-field style="width: 500px">
-          <mat-label>Middle Name</mat-label>
-          <input matInput name="middlename" [(ngModel)]="patient.MiddleName">
-        </mat-form-field>
-        <br>
+            <button mat-button type="button" [matMenuTriggerFor]="gender" style="margin-bottom:20px; padding-top:0">Title:</button>
 
-        <mat-form-field style="width: 500px">
-          <mat-label>Last Name</mat-label>
-          <input matInput name="lastname" #lastname="ngModel" [(ngModel)]="patient.LastName" required>
-        </mat-form-field>
-        <br>
+            <mat-menu #gender="matMenu">
+              <button mat-menu-item [matMenuTriggerFor]="male">Male</button>
+              <button mat-menu-item [matMenuTriggerFor]="female">Female</button>
+              <button mat-menu-item [matMenuTriggerFor]="transgender">Transgender</button>
+            </mat-menu>
 
-        <mat-form-field>
-          <mat-label>Date of Birth</mat-label>
-          <input matInput [max]="maxDate" [matDatepicker]="dob" name="dateofbirth" #dateofbirth="ngModel" [(ngModel)]="patient.DateOfBirth" required>
-          <mat-datepicker-toggle matSuffix [for]="dob"></mat-datepicker-toggle>
-          <mat-datepicker #dob></mat-datepicker>
-        </mat-form-field>
-        <br>
+            <mat-menu #male="matMenu">
+              <mat-radio-group aria-label="Select an option" name="title" [(ngModel)]="patient.Title" required>
+                <mat-radio-button value="Mr.">Mr.</mat-radio-button>
+                <mat-radio-button value="Master.">Master</mat-radio-button>
+                <mat-radio-button value="Male Dr.">Dr.</mat-radio-button>
+              </mat-radio-group>
+            </mat-menu>
 
-        <mat-form-field>
-          <mat-label>Age</mat-label>
-          <input matInput id="age" name="age" #age="ngModel" appForbiddenValue [(ngModel)]="patient.Age" required>
-        </mat-form-field>
-        <mat-error *ngIf="age.errors?.forbiddenValue && age.dirty">Age should be greater than 0</mat-error>
-        <br>
+            <mat-menu #female="matMenu">
+              <mat-radio-group aria-label="Select an option" name="title" [(ngModel)]="patient.Title">
+                <mat-radio-button value="Ms.">Ms.</mat-radio-button>
+                <mat-radio-button value="Mrs.">Mrs.</mat-radio-button>
+                <mat-radio-button value="Baby.">Baby.</mat-radio-button>
+                <mat-radio-button value="Female Dr.">Dr.</mat-radio-button>
+              </mat-radio-group>
+            </mat-menu>
 
-        <mat-form-field style="width: 500px">
-          <mat-label>Phone</mat-label>
-          <input matInput name="phone" #phone="ngModel" appForbiddenValue [(ngModel)]="patient.Phone" required>
-        </mat-form-field>
-        <mat-error *ngIf="phone.errors?.forbiddenValue && phone.dirty">Please enter numeric values only</mat-error>
-        <br>
+            <mat-menu #transgender="matMenu">
+              <mat-radio-group aria-label="Select an option" name="title" [(ngModel)]="patient.Title">
+                <mat-radio-button value="T Mr.">Mr.</mat-radio-button>
+                <mat-radio-button value="T Master.">Master.</mat-radio-button>
+                <mat-radio-button value="T Ms.">Ms.</mat-radio-button>
+                <mat-radio-button value="T Mrs.">Mrs.</mat-radio-button>
+                <mat-radio-button value="T Baby.">Baby.</mat-radio-button>
+                <mat-radio-button value="T Dr.">Dr.</mat-radio-button>
+              </mat-radio-group>
+            </mat-menu>
 
-        <mat-form-field style="width: 500px">
-          <mat-label>Address</mat-label>
-          <input matInput name="address" #address="ngModel" [(ngModel)]="patient.Address">
-        </mat-form-field>
-        <br>
+            <span *ngIf="!patient.Title" class="text text-danger">Not Selected</span>
+            <span style="color:mediumblue">{{patient.Title}}</span>
+            <br>
 
+            <mat-form-field style="width: 500px">
+              <mat-label>First Name</mat-label>
+              <input matInput name="firstname" #firstname="ngModel" [(ngModel)]="patient.FirstName" required>
+            </mat-form-field>
+            <br>
+
+            <mat-form-field style="width: 500px">
+              <mat-label>Middle Name</mat-label>
+              <input matInput name="middlename" [(ngModel)]="patient.MiddleName">
+            </mat-form-field>
+            <br>
+
+            <mat-form-field style="width: 500px">
+              <mat-label>Last Name</mat-label>
+              <input matInput name="lastname" #lastname="ngModel" [(ngModel)]="patient.LastName" required>
+            </mat-form-field>
+            <br>
+
+            <mat-form-field>
+              <mat-label>Date of Birth</mat-label>
+              <input matInput [max]="maxDate" [matDatepicker]="dob" name="dateofbirth" #dateofbirth="ngModel" [(ngModel)]="patient.DateOfBirth" (dateChange)="changeDateOfBirth()" required>
+              <mat-datepicker-toggle matSuffix [for]="dob"></mat-datepicker-toggle>
+              <mat-datepicker #dob startView="year"></mat-datepicker>
+            </mat-form-field>
+            <br>
+
+            <mat-label style="margin-right:20px">Age:</mat-label>
+            <mat-form-field style="width:50px">
+              <input matInput id="years" name="years" [(ngModel)]="years">
+            </mat-form-field>
+            <mat-label style="margin-right:20px">Years</mat-label>
+            <mat-form-field style="width:50px">
+              <input matInput id="months" name="months" [(ngModel)]="months">
+            </mat-form-field>
+            <mat-label style="margin-right:20px">Months</mat-label>
+            <mat-form-field style="width:50px">
+              <input matInput id="days" name="days" [(ngModel)]="days">
+            </mat-form-field>
+            <mat-label style="margin-right:20px">Days</mat-label>
+            <br>
+
+            <mat-form-field style="width: 500px">
+              <mat-label>Address</mat-label>
+              <input matInput name="address" #address="ngModel" [(ngModel)]="patient.Address">
+            </mat-form-field>
+            <br>
+
+            <mat-form-field style="width: 500px">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" name="email" #email="ngModel" [(ngModel)]="patient.Email" pattern="^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$">
+            </mat-form-field>
+            <br>
+
+          </div>
+
+          <div class="column">
+            <br />
+            <div *ngIf="previousRecords.length>0">
+              Previous Records Found
+              <br />
+              <br/>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>S No.</th>
+                    <th>Name</th>
+                    <th>Options</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let record of previousRecords; let i=index">
+                    <td>{{i+1}}</td>
+                    <td>{{record.FirstName}} {{record.LastName}}</td>
+                    <td><button mat-raised-button color="primary" (click)="InitializePatientByPhone(record.PatientId)">Use</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </mat-tab>
 
@@ -67,31 +146,118 @@
     <mat-tab label="Test Details">
       <div class="container">
         <br>
-        <mat-form-field style="width: 500px">
-          <mat-label>Doctor Name</mat-label>
-          <input matInput name="doctorname" #doctorname="ngModel" [(ngModel)]="patient.DoctorName" required>
-        </mat-form-field>
+        <span>
+          <mat-form-field style="width: 60%">
+            <mat-label>Doctor Name</mat-label>
+            <input matInput name="doctorname" #doctorname="ngModel" [(ngModel)]="patient.DoctorName" required>
+          </mat-form-field>
+
+          <mat-form-field style="margin-left:10%; width:30%">
+            <mat-label>Bar Code</mat-label>
+            <input matInput name="barcode" [(ngModel)]="patient.Barcode" required>
+          </mat-form-field>
+        </span>
         <br>
 
-        
-          <mat-label>Test Details:  </mat-label>
-          <mat-checkbox style="margin:20px" name="malaria" [(ngModel)]="patient.Tests.Malaria">
-            Malaria
-          </mat-checkbox>
-          <mat-checkbox style="margin:20px" name="typhoid" [(ngModel)]="patient.Tests.Typhoid">
-            Typhoid
-          </mat-checkbox>
-        
-        <br>
+        <mat-checkbox name="homeCollection" [(ngModel)]="patient.Home" [labelPosition]=" 'before' ">Home Collection</mat-checkbox>
+        <br />
 
-        <mat-form-field>
-          <mat-label>Bar Code</mat-label>
-          <input matInput name="barcode" [(ngModel)]="patient.BarCode" required>
-        </mat-form-field>
-        <br>
+        <span>
+          <mat-form-field *ngIf="patient.Home" style="width:20%">
+            <mat-label>Collection Date</mat-label>
+            <input matInput [max]="maxDate" [matDatepicker]="cd" name="collectionDate" [(ngModel)]="patient.HomeCollection.CollectionDate" (dateChange)="changeCollectionDate()">
+            <mat-datepicker-toggle matSuffix [for]="cd"></mat-datepicker-toggle>
+            <mat-datepicker #cd></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field *ngIf="patient.Home" style="width:60%; margin-left:20%">
+            <mat-label>Collected By</mat-label>
+            <input matInput name="collectedBy" [(ngModel)]="patient.HomeCollection.CollectedBy">
+          </mat-form-field>
+          <br />
+
+          <mat-form-field *ngIf="patient.Home" style="width:20%">
+            <mat-label>Charges (in Rs.)</mat-label>
+            <input matInput name="collectionCharges" [(ngModel)]="patient.HomeCollection.CollectionCharges">
+          </mat-form-field>
+
+          <mat-form-field *ngIf="patient.Home" style="width:60%; margin-left:20%">
+            <mat-label>Collection Address</mat-label>
+            <input matInput name="collectionAddress" [(ngModel)]="patient.HomeCollection.CollectionAddress">
+          </mat-form-field>
+        </span>
+
+        <mat-accordion>
+          <mat-expansion-panel (opened)="panelOpenState = true"
+                               (closed)="panelOpenState = false">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Tests
+              </mat-panel-title>
+              <mat-panel-description>
+                {{panelOpenState ? 'Please select Tests' : 'Click to expand'}}
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <mat-form-field>
+              <mat-label>Search</mat-label>
+              <input matInput (keyup)="applyFilter($event)" placeholder="Test name or Test code">
+            </mat-form-field>
+
+
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+              <!-- Checkbox Column -->
+              <ng-container matColumnDef="select">
+                <mat-header-cell *matHeaderCellDef>
+                  <mat-checkbox (change)="$event ? masterToggle() : null"
+                                [checked]="selection.hasValue() && isAllSelected()"
+                                [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                [aria-label]="checkboxLabel()">
+                  </mat-checkbox>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <mat-checkbox (click)="$event.stopPropagation()"
+                                (change)="$event ? selection.toggle(row) : null"
+                                [checked]="selection.isSelected(row)"
+                                [aria-label]="checkboxLabel(row)">
+                  </mat-checkbox>
+                </mat-cell>
+              </ng-container>
+
+              <!-- Name Column -->
+              <ng-container matColumnDef="TestName">
+                <mat-header-cell *matHeaderCellDef> Test Name </mat-header-cell>
+                <mat-cell *matCellDef="let test"> {{test.TestName}} </mat-cell>
+              </ng-container>
+
+              <!-- Code Column -->
+              <ng-container matColumnDef="TestCode">
+                <mat-header-cell *matHeaderCellDef> Test Code </mat-header-cell>
+                <mat-cell *matCellDef="let test"> {{test.TestCode}} </mat-cell>
+              </ng-container>
+
+              <!-- Price Column -->
+              <ng-container matColumnDef="TestPrice">
+                <mat-header-cell *matHeaderCellDef> Test Price </mat-header-cell>
+                <mat-cell *matCellDef="let test"> {{test.TestPrice}} </mat-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"
+                       (click)="selection.toggle(row)">
+              </mat-row>
+            </table>
+
+            <span style="display:flex; justify-content:center; align-items:center; margin:20px">
+              <mat-card style="width:50%; align-self:center; text-align:center">Total Amount: Rs. {{patient.Payment.TotalAmount}}</mat-card>
+            </span>
+          </mat-expansion-panel>
+        </mat-accordion>
+
+
       </div>
     </mat-tab>
-
 
 
     <mat-tab label="Payment Details">
@@ -105,19 +271,17 @@
             <mat-option value="wallet">Paytm/PhonePay/GooglePay</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-error *ngIf="paymentmode.invalid && paymentmode.touched">Mandatory Field</mat-error>
         <br>
 
         <mat-form-field>
           <mat-label>Total Amount (in Rs.)</mat-label>
-          <input matInput name="totalamount" #totalamount="ngModel" [(ngModel)]="patient.Payment.TotalAmount" required>
+          <input matInput name="totalamount" #totalamount="ngModel" [(ngModel)]="patient.Payment.TotalAmount" readonly>
         </mat-form-field>
-        <mat-error *ngIf="totalamount.invalid && totalamount.touched">Mandatory Field</mat-error>
         <br>
 
         <mat-form-field>
           <mat-label>Discount (in %)</mat-label>
-          <input matInput name="discount" #discount="ngModel" [(ngModel)]="patient.Payment.Discount">
+          <input matInput name="discount" #discount="ngModel" [(ngModel)]="patient.Payment.Discount" required pattern="^[0-9]*$">
         </mat-form-field>
         <br>
 
@@ -134,7 +298,7 @@
 
         <mat-form-field>
           <mat-label>Paid Amount (in Rs)</mat-label>
-          <input matInput name="paidamount" #paidamount="ngModel" [(ngModel)]="patient.Payment.PaidAmount" required>
+          <input matInput name="paidamount" #paidamount="ngModel" [(ngModel)]="patient.Payment.PaidAmount" required pattern="^[0-9]*$">
         </mat-form-field>
         <mat-error *ngIf="paidamount.invalid && paidamount.touched">Mandatory Field</mat-error>
         <mat-error *ngIf="paidamount.touched && paidamount.value>patient.NetAmount">Paid Amount greater than Net Amount</mat-error>
@@ -154,8 +318,8 @@
 
 
   <div *ngIf="!mode" class="fixedFooter">
-    <button mat-raised-button color="primary" (click)="SavePatient()" [disabled]="patientRegistration.form.invalid">Save Details</button>
+    <button mat-raised-button color="primary" (click)="SavePatient(patientRegistration)" [disabled]="patientRegistration.form.invalid || !patient.Title">Save Details</button>
   </div>
   <div *ngIf="mode" class="fixedFooter">
-    <button mat-raised-button color="primary" (click)="SavePatient()" [disabled]="patientRegistration.form.invalid">Update Details</button>
+    <button mat-raised-button color="primary" (click)="UpdatePatient(patientRegistration)" [disabled]="patientRegistration.form.invalid || patientRegistration.form.untouched">Update Details</button>
   </div>

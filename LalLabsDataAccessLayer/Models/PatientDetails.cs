@@ -11,7 +11,10 @@ using LalLabsDataAccessLayer.Models;
 
 namespace LalLabsDataAccessLayer.Models
 {
-
+    [AttributeUsage(AttributeTargets.Property,
+      Inherited = false,
+      AllowMultiple = false)]
+    internal sealed class OptionalAttribute : Attribute { }
     public class PatientDetails
     {
         public long PatientId { get; set; }
@@ -24,17 +27,25 @@ namespace LalLabsDataAccessLayer.Models
 
         public string LastName { get; set; }
 
-        public Int32 Age { get; set; }
+        public string Age { get; set; }
 
         public DateTime DateOfBirth { get; set; }
         
-        public long Phone { get; set; }
+        public string Phone { get; set; }
         
+        [Optional]
         public string Address { get; set; }
-        
+
+        [Optional]
+        public string Email { get; set; }
+
         public string DoctorName { get; set; }
 
-        public TestDetails Tests = new TestDetails();
+        public Boolean Home { get; set; }
+
+        public CollectionDetails HomeCollection = new CollectionDetails();
+
+        public List<TestDetails> Tests = new List<TestDetails>();
 
         public string Barcode { get; set; }
 
@@ -43,6 +54,6 @@ namespace LalLabsDataAccessLayer.Models
 
         public DateTime CreatedOn { get; set; }
 
-        public DateTime ModifiedOn { get; set; }
+        public DateTime? ModifiedOn { get; set; }
     }
 }

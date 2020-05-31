@@ -35,5 +35,22 @@ namespace LalLabsWebService.Controllers
             return false;
         }
 
+        [HttpGet]
+        public string GetUserRole(string userName, string password)
+        {
+            try
+            {
+                DataAccessLayer obj = new DataAccessLayer();
+                string userRole = obj.GetUserRole(userName,password);
+                return userRole;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine("Error Generated. Details: " + e.ToString());
+            }
+
+            return null;
+        }
     }
 }
