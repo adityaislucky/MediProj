@@ -1,0 +1,22 @@
+<div class="container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>S. No.</th>
+        <th>Test Name</th>
+        <th>Test Code</th>
+        <th>Test Price</th>
+        <th>Options</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let test of tests; let i=index">
+        <td>{{i+1}}</td>
+        <td>{{test.TestName}}</td>
+        <td>{{test.TestCode}}</td>
+        <td>{{test.TestPrice}}</td>
+        <td><button mat-button mat-raised-button color="primary" (click)="EditTest(test)">Edit</button></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
