@@ -1,12 +1,29 @@
-<h2 mat-dialog-title style="background-color:cornflowerblue; text-align:center">Save Patient</h2>
-<mat-dialog-content style="text-align:center">
-  Patient Saved Successfully
-  <br />
-  <br />
-  <h4>Registration No:</h4>
-  <h2 style="color:blue; margin:20px">{{data.id}}</h2>
-</mat-dialog-content>
-<mat-dialog-actions>
-  <button mat-button color="primary" mat-dialog-close (click)="refresh()">Save Another Patient</button>
-  <button mat-button color="primary" mat-dialog-close routerLink="/patientGrid">Goto Patient Grid</button>
-</mat-dialog-actions>
+<div *ngIf="!data.mode">
+  <h2 mat-dialog-title style="background-color:cornflowerblue; text-align:center">Save Patient</h2>
+  <mat-dialog-content style="text-align:center">
+    Patient Saved Successfully
+    <br />
+    <br />
+    <h4>Registration No:</h4>
+    <h2 style="color:blue; margin:20px">{{data.id}}</h2>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button color="primary" mat-dialog-close (click)="refresh()">Save Another Patient</button>
+    <button mat-button color="primary" mat-dialog-close routerLink="/patientGrid">Goto Patient Grid</button>
+  </mat-dialog-actions>
+</div>
+
+<div *ngIf="data.mode">
+  <h2 mat-dialog-title style="background-color:cornflowerblue; text-align:center">Update Patient</h2>
+  <mat-dialog-content style="text-align:center">
+    Patient Updated Successfully
+    <br />
+    <br />
+    <h4>Registration No:</h4>
+    <h2 style="color:blue; margin:20px">{{data.id}}</h2>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button color="primary" mat-dialog-close routerLink="/patientRegistration">Save Another Patient</button>
+    <button mat-button color="primary" mat-dialog-close routerLink="/patientGrid">Goto Patient Grid</button>
+  </mat-dialog-actions>
+</div>

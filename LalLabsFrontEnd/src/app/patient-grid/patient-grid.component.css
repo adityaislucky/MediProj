@@ -1,6 +1,7 @@
 mat-row.example-detail-row {
-  height: 0;
+  height:0;
 }
+
 
 mat-row.example-element-row:not(.example-expanded-row):hover {
   background: whitesmoke;
@@ -17,12 +18,4 @@ mat-row.example-element-row:not(.example-expanded-row):active {
 .example-element-detail {
   overflow: hidden;
   display: flex;
-}
-
-.example-element-description {
-  padding: 16px;
-}
-
-.example-element-description-attribution {
-  opacity: 0.5;
 }

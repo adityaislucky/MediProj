@@ -8,7 +8,9 @@ namespace LalLabsDataAccessLayer.Models
 {
     public class TestDetails
     {
-        public Boolean Malaria { get; set; }
-        public Boolean Typhoid { get; set; }
+        public int TestId { get; set; }
+        public string TestName { get; set; }
+        public decimal TestPrice { get; set; }
+        public string TestCode { get; set; }
     }
 }

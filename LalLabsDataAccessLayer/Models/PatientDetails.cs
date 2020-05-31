@@ -45,7 +45,7 @@ namespace LalLabsDataAccessLayer.Models
 
         public CollectionDetails HomeCollection = new CollectionDetails();
 
-        public TestDetails Tests = new TestDetails();
+        public List<TestDetails> Tests = new List<TestDetails>();
 
         public string Barcode { get; set; }
 

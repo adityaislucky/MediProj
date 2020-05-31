@@ -31,13 +31,13 @@ namespace LalLabsWebService.Controllers
         }
 
         [HttpGet]
-        public DataTable PatientGrid(string AddedBy)
+        public PatientDetails[] PatientGrid(string AddedBy)
         {
             try
             {
                 DataAccessLayer obj = new DataAccessLayer();
-                DataTable dt = obj.PatientGrid(AddedBy);
-                return dt;
+                PatientDetails[] Patients = obj.PatientGrid(AddedBy);
+                return Patients;
             }
 
             catch (Exception e)
@@ -49,14 +49,14 @@ namespace LalLabsWebService.Controllers
         }
 
         [HttpGet]
-        public DataTable GetPatient(string PatientId)
+        public PatientDetails GetPatient(string PatientId)
         {
             try
             {
                 long patientId = long.Parse(PatientId);
                 DataAccessLayer obj = new DataAccessLayer();
-                DataTable dt = obj.GetPatient(patientId);
-                return dt;
+                PatientDetails Patient = obj.GetPatient(patientId);
+                return Patient;
             }
 
             catch (Exception e)
@@ -67,7 +67,23 @@ namespace LalLabsWebService.Controllers
             return null;
         }
 
+        [HttpPost]
+        public long UpdatePatient(LalLabsDataAccessLayer.Models.PatientDetails patient)
+        {
+            try
+            {
+                DataAccessLayer obj = new DataAccessLayer();
+                long status = obj.UpdatePatient(patient);
+                return status;
+            }
 
+            catch (Exception e)
+            {
+                Console.WriteLine("Error Generated. Details: " + e.ToString());
+            }
+
+            return 0;
+        }
     }
     
 }

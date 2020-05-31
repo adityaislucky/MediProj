@@ -6,7 +6,7 @@
          <mat-card-header>
            <div mat-card-avatar class="example-header-image"></div>
            <mat-card-title>Hi {{userName}}</mat-card-title>
-           <mat-card-subtitle>Admin User</mat-card-subtitle>
+           <mat-card-subtitle>{{userRole}}</mat-card-subtitle>
          </mat-card-header>
          <img mat-card-image src="../../assets/Rustin_Cohle.jpg" class="mx-auto d-block" style="height: 350px; width:250px" alt="User Image">
          <mat-card-content style="text-align:center">
@@ -38,7 +38,7 @@
          </mat-card-content>
 
          <mat-card-content style="text-align:center">
-           <button mat-raised-button color="primary" style="width:200px">Change Test Price</button>
+           <button *ngIf="admin" mat-raised-button color="primary" style="width:200px" routerLink="/testManagement">Tests Management</button>
          </mat-card-content>
 
        </mat-card>

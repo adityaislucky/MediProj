@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.CodeDom;
 using LalLabsDataAccessLayer.Models;
 using Microsoft.SqlServer.Server;
+using System.Diagnostics;
 
 namespace LalLabsDataAccessLayer
 {
@@ -82,10 +83,9 @@ namespace LalLabsDataAccessLayer
 
 		public long SavePatient(PatientDetails patient)
 		{
-			cmdLalLabs = new SqlCommand("SavePatient", conLalLabs);
 			try
 			{
-
+				cmdLalLabs = new SqlCommand("SavePatient", conLalLabs);
 				conLalLabs.Open();
 				cmdLalLabs.CommandType = CommandType.StoredProcedure;
 				cmdLalLabs.Parameters.AddWithValue("@Title", patient.Title);
@@ -103,8 +103,6 @@ namespace LalLabsDataAccessLayer
 				cmdLalLabs.Parameters.AddWithValue("@CollectedBy", patient.HomeCollection.CollectedBy);
 				cmdLalLabs.Parameters.AddWithValue("@CollectionCharges", patient.HomeCollection.CollectionCharges);
 				cmdLalLabs.Parameters.AddWithValue("@CollectionAddress", patient.HomeCollection.CollectionAddress);
-				cmdLalLabs.Parameters.AddWithValue("@Malaria", patient.Tests.Malaria);
-				cmdLalLabs.Parameters.AddWithValue("@Typhoid", patient.Tests.Typhoid);
 				cmdLalLabs.Parameters.AddWithValue("@Barcode", patient.Barcode);
 				cmdLalLabs.Parameters.AddWithValue("@PaymentMode", patient.Payment.PaymentMode);
 				cmdLalLabs.Parameters.AddWithValue("@TotalAmount", patient.Payment.TotalAmount);
@@ -126,6 +124,19 @@ namespace LalLabsDataAccessLayer
 
 				cmdLalLabs.ExecuteNonQuery();
 				long status = (long)PatientId.Value;
+
+				foreach (TestDetails test in patient.Tests)
+				{
+					cmdLalLabs = new SqlCommand("SaveTestDetails", conLalLabs);
+					cmdLalLabs.CommandType = CommandType.StoredProcedure;
+					cmdLalLabs.Parameters.AddWithValue("@PatientId", status);
+					cmdLalLabs.Parameters.AddWithValue("@TestId", test.TestId);
+					cmdLalLabs.Parameters.AddWithValue("@TestName", test.TestName);
+					cmdLalLabs.Parameters.AddWithValue("@TestPrice", test.TestPrice);
+					cmdLalLabs.Parameters.AddWithValue("@TestCode", test.TestCode);
+					cmdLalLabs.ExecuteNonQuery();
+				}
+
 				return status;
 			}
 
@@ -143,19 +154,71 @@ namespace LalLabsDataAccessLayer
 			return 0;
 		}
 
-		public DataTable PatientGrid(string AddedBy)
+		public PatientDetails[] PatientGrid(string AddedBy)
 		{
-			cmdLalLabs = new SqlCommand("PatientGrid", conLalLabs);
-			DataTable dt = new DataTable();
 			try
 			{
 				conLalLabs.Open();
+				cmdLalLabs = new SqlCommand("PatientGrid", conLalLabs);
 				cmdLalLabs.CommandType = CommandType.StoredProcedure;
 				cmdLalLabs.Parameters.AddWithValue("@AddedBy", AddedBy);
 				SqlDataAdapter da = new SqlDataAdapter(cmdLalLabs);
+				DataTable dt = new DataTable();
 				da.Fill(dt);
-				return dt;
+				List<PatientDetails> Patients = new List<PatientDetails>();
+				foreach(DataRow row in dt.Rows)
+				{
+					var Patient = new PatientDetails();
+					Patient.Phone = row["Phone"].ToString();
+					Patient.PatientId = (long)row["PatientId"];
+					Patient.Title = row["Title"].ToString();
+					Patient.FirstName = row["FirstName"].ToString();
+					Patient.MiddleName = row["MiddleName"].ToString();
+					Patient.LastName = row["LastName"].ToString();
+					Patient.DateOfBirth = (DateTime)row["DateOfBirth"];
+					Patient.Age = row["Age"].ToString();
+					Patient.Address = row["PAddress"].ToString();
+					Patient.DoctorName = row["DoctorName"].ToString();
+					Patient.Barcode = row["Barcode"].ToString();
+					Patient.AddedBy = row["AddedBy"].ToString();
+					Patient.CreatedOn = (DateTime)row["CreatedOn"];
+					Patient.ModifiedOn = Convert.IsDBNull(row["ModifiedOn"]) ? null : (DateTime?)row["ModifiedOn"];
+					Patient.Email = row["Email"].ToString();
+					Patient.Home = (Boolean)row["HomeCollection"];
+					Patient.Payment.PaymentMode = row["PaymentMode"].ToString();
+					Patient.Payment.TotalAmount = (decimal)row["TotalAmount"];
+					Patient.Payment.Discount = Convert.ToDecimal(row["Discount"]);
+					Patient.Payment.DiscountAmount = (decimal)row["DiscountAmount"];
+					Patient.Payment.NetAmount = (decimal)row["NetAmount"];
+					Patient.Payment.PaidAmount = (decimal)row["PaidAmount"];
+					Patient.Payment.BalanceAmount = (decimal)row["BalanceAmount"];
+					Patient.HomeCollection.CollectedBy = Convert.IsDBNull(row["CollectedBy"]) ? null : (string)row["CollectedBy"];
+					Patient.HomeCollection.CollectionDate = Convert.IsDBNull(row["CollectionDate"]) ? null : (DateTime?)row["CollectionDate"];
+					Patient.HomeCollection.CollectionCharges = Convert.IsDBNull(row["CollectionCharges"]) ? 0 : (decimal)row["CollectionCharges"];
+					Patient.HomeCollection.CollectionAddress = Convert.IsDBNull(row["CollectionAddress"]) ? null : (string)row["CollectionAddress"];
+
+					cmdLalLabs = new SqlCommand("GetTestDetailsByPatientId", conLalLabs);
+					cmdLalLabs.CommandType = CommandType.StoredProcedure;
+					cmdLalLabs.Parameters.AddWithValue("@PatientId", Patient.PatientId);
+					da = new SqlDataAdapter(cmdLalLabs);
+					dt = new DataTable();
+					da.Fill(dt);
+					foreach (DataRow tempRow in dt.Rows)
+					{
+						TestDetails tempTestDetail = new TestDetails();
+						tempTestDetail.TestId = (Int32)tempRow["TestId"];
+						tempTestDetail.TestCode = tempRow["TestCode"].ToString();
+						tempTestDetail.TestName = tempRow["TestName"].ToString();
+						tempTestDetail.TestPrice = (decimal)tempRow["TestPrice"];
+						Patient.Tests.Add(tempTestDetail);
+					}
+
+					Patients.Add(Patient);
+				}
+				
+				return Patients.ToArray();
 			}
+
 			catch (SqlException e)
 			{
 				Console.WriteLine("Error Generated. Details: " + e.ToString());
@@ -167,18 +230,63 @@ namespace LalLabsDataAccessLayer
 			return null;
 		}
 
-		public DataTable GetPatient(long PatientId)
+		public PatientDetails GetPatient(long PatientId)
 		{
-			cmdLalLabs = new SqlCommand("GetPatient", conLalLabs);
 			try
 			{
 				conLalLabs.Open();
+				cmdLalLabs = new SqlCommand("GetPatientByPatientId", conLalLabs);
 				cmdLalLabs.CommandType = CommandType.StoredProcedure;
 				cmdLalLabs.Parameters.AddWithValue("@PatientId", PatientId);
 				SqlDataAdapter da = new SqlDataAdapter(cmdLalLabs);
 				DataTable dt = new DataTable();
 				da.Fill(dt);
-				return dt;
+				DataRow row = dt.Rows[0];
+				var Patient = new PatientDetails();
+				Patient.Phone = row["Phone"].ToString();
+				Patient.PatientId = (long)row["PatientId"];
+				Patient.Title = row["Title"].ToString();
+				Patient.FirstName = row["FirstName"].ToString();
+				Patient.MiddleName = row["MiddleName"].ToString();
+				Patient.LastName = row["LastName"].ToString();
+				Patient.DateOfBirth = (DateTime)row["DateOfBirth"];
+				Patient.Age = row["Age"].ToString();
+				Patient.Address = row["PAddress"].ToString();
+				Patient.DoctorName = row["DoctorName"].ToString();
+				Patient.Barcode = row["Barcode"].ToString();
+				Patient.AddedBy = row["AddedBy"].ToString();
+				Patient.CreatedOn = (DateTime)row["CreatedOn"];
+				Patient.ModifiedOn = Convert.IsDBNull(row["ModifiedOn"]) ? null: (DateTime?)row["ModifiedOn"];
+				Patient.Email = row["Email"].ToString();
+				Patient.Home = (Boolean)row["HomeCollection"];
+				Patient.Payment.PaymentMode = row["PaymentMode"].ToString();
+				Patient.Payment.TotalAmount = (decimal)row["TotalAmount"];
+				Patient.Payment.Discount = Convert.ToDecimal(row["Discount"]);
+				Patient.Payment.DiscountAmount = (decimal)row["DiscountAmount"];
+				Patient.Payment.NetAmount = (decimal)row["NetAmount"];
+				Patient.Payment.PaidAmount = (decimal)row["PaidAmount"];
+				Patient.Payment.BalanceAmount = (decimal)row["BalanceAmount"];
+				Patient.HomeCollection.CollectedBy = Convert.IsDBNull(row["CollectedBy"]) ? null : (string)row["CollectedBy"];
+				Patient.HomeCollection.CollectionDate = Convert.IsDBNull(row["CollectionDate"]) ? null : (DateTime?)row["CollectionDate"];
+				Patient.HomeCollection.CollectionCharges = Convert.IsDBNull(row["CollectionCharges"]) ? 0 : (decimal)row["CollectionCharges"];
+				Patient.HomeCollection.CollectionAddress = Convert.IsDBNull(row["CollectionAddress"]) ? null : (string)row["CollectionAddress"];
+
+				cmdLalLabs = new SqlCommand("GetTestDetailsByPatientId", conLalLabs);
+				cmdLalLabs.CommandType = CommandType.StoredProcedure;
+				cmdLalLabs.Parameters.AddWithValue("@PatientId", PatientId);
+				da = new SqlDataAdapter(cmdLalLabs);
+				dt = new DataTable();
+				da.Fill(dt);
+				foreach(DataRow tempRow in dt.Rows)
+				{
+					TestDetails tempTestDetail = new TestDetails();
+					tempTestDetail.TestId = (Int32)tempRow["TestId"];
+					tempTestDetail.TestCode = tempRow["TestCode"].ToString();
+					tempTestDetail.TestName = tempRow["TestName"].ToString();
+					tempTestDetail.TestPrice = (decimal)tempRow["TestPrice"];
+					Patient.Tests.Add(tempTestDetail);
+				}
+				return Patient;
 			}
 			catch (SqlException e)
 			{
@@ -237,19 +345,71 @@ namespace LalLabsDataAccessLayer
 			return null;
 		}
 
-		public DataTable GetPatientByPhone(string phone)
+		public PatientDetails[] GetPatientByPhone(string phone)
 		{
-			cmdLalLabs = new SqlCommand("GetPatientByPhone", conLalLabs);
 			try
 			{
 				conLalLabs.Open();
+				cmdLalLabs = new SqlCommand("GetPatientByPhone", conLalLabs);
 				cmdLalLabs.CommandType = CommandType.StoredProcedure;
 				cmdLalLabs.Parameters.AddWithValue("@Phone", phone);
 				SqlDataAdapter da = new SqlDataAdapter(cmdLalLabs);
 				DataTable dt = new DataTable();
 				da.Fill(dt);
-				return dt;
+				List<PatientDetails> Patients = new List<PatientDetails>();
+				foreach (DataRow row in dt.Rows)
+				{
+					var Patient = new PatientDetails();
+					Patient.Phone = row["Phone"].ToString();
+					Patient.PatientId = (long)row["PatientId"];
+					Patient.Title = row["Title"].ToString();
+					Patient.FirstName = row["FirstName"].ToString();
+					Patient.MiddleName = row["MiddleName"].ToString();
+					Patient.LastName = row["LastName"].ToString();
+					Patient.DateOfBirth = (DateTime)row["DateOfBirth"];
+					Patient.Age = row["Age"].ToString();
+					Patient.Address = row["PAddress"].ToString();
+					Patient.DoctorName = row["DoctorName"].ToString();
+					Patient.Barcode = row["Barcode"].ToString();
+					Patient.AddedBy = row["AddedBy"].ToString();
+					Patient.CreatedOn = (DateTime)row["CreatedOn"];
+					Patient.ModifiedOn = Convert.IsDBNull(row["ModifiedOn"]) ? null : (DateTime?)row["ModifiedOn"];
+					Patient.Email = row["Email"].ToString();
+					Patient.Home = (Boolean)row["HomeCollection"];
+					Patient.Payment.PaymentMode = row["PaymentMode"].ToString();
+					Patient.Payment.TotalAmount = (decimal)row["TotalAmount"];
+					Patient.Payment.Discount = Convert.ToDecimal(row["Discount"]);
+					Patient.Payment.DiscountAmount = (decimal)row["DiscountAmount"];
+					Patient.Payment.NetAmount = (decimal)row["NetAmount"];
+					Patient.Payment.PaidAmount = (decimal)row["PaidAmount"];
+					Patient.Payment.BalanceAmount = (decimal)row["BalanceAmount"];
+					Patient.HomeCollection.CollectedBy = Convert.IsDBNull(row["CollectedBy"]) ? null : (string)row["CollectedBy"];
+					Patient.HomeCollection.CollectionDate = Convert.IsDBNull(row["CollectionDate"]) ? null : (DateTime?)row["CollectionDate"];
+					Patient.HomeCollection.CollectionCharges = Convert.IsDBNull(row["CollectionCharges"]) ? 0 : (decimal)row["CollectionCharges"];
+					Patient.HomeCollection.CollectionAddress = Convert.IsDBNull(row["CollectionAddress"]) ? null : (string)row["CollectionAddress"];
+
+					cmdLalLabs = new SqlCommand("GetTestDetailsByPatientId", conLalLabs);
+					cmdLalLabs.CommandType = CommandType.StoredProcedure;
+					cmdLalLabs.Parameters.AddWithValue("@PatientId", Patient.PatientId);
+					da = new SqlDataAdapter(cmdLalLabs);
+					dt = new DataTable();
+					da.Fill(dt);
+					foreach (DataRow tempRow in dt.Rows)
+					{
+						TestDetails tempTestDetail = new TestDetails();
+						tempTestDetail.TestId = (Int32)tempRow["TestId"];
+						tempTestDetail.TestCode = tempRow["TestCode"].ToString();
+						tempTestDetail.TestName = tempRow["TestName"].ToString();
+						tempTestDetail.TestPrice = (decimal)tempRow["TestPrice"];
+						Patient.Tests.Add(tempTestDetail);
+					}
+
+					Patients.Add(Patient);
+				}
+
+				return Patients.ToArray();
 			}
+
 			catch (SqlException e)
 			{
 				Console.WriteLine("Error Generated. Details: " + e.ToString());
@@ -287,7 +447,109 @@ namespace LalLabsDataAccessLayer
 			}
 			return null;
 		}
-	
+
+		public long UpdatePatient(PatientDetails patient)
+		{
+			try
+			{
+				conLalLabs.Open();
+				cmdLalLabs = new SqlCommand("UpdatePatient", conLalLabs);
+				cmdLalLabs.CommandType = CommandType.StoredProcedure;
+				cmdLalLabs.Parameters.AddWithValue("@PatientId", patient.PatientId);
+				cmdLalLabs.Parameters.AddWithValue("@Title", patient.Title);
+				cmdLalLabs.Parameters.AddWithValue("@FirstName", patient.FirstName);
+				cmdLalLabs.Parameters.AddWithValue("@MiddleName", patient.MiddleName);
+				cmdLalLabs.Parameters.AddWithValue("@LastName", patient.LastName);
+				cmdLalLabs.Parameters.AddWithValue("@DateOfBirth", patient.DateOfBirth);
+				cmdLalLabs.Parameters.AddWithValue("@Age", patient.Age);
+				cmdLalLabs.Parameters.AddWithValue("@Phone", patient.Phone);
+				cmdLalLabs.Parameters.AddWithValue("@PAddress", patient.Address);
+				cmdLalLabs.Parameters.AddWithValue("@Email", patient.Email);
+				cmdLalLabs.Parameters.AddWithValue("@DoctorName", patient.DoctorName);
+				cmdLalLabs.Parameters.AddWithValue("@HomeCollection", patient.Home);
+				cmdLalLabs.Parameters.AddWithValue("@CollectionDate", patient.HomeCollection.CollectionDate);
+				cmdLalLabs.Parameters.AddWithValue("@CollectedBy", patient.HomeCollection.CollectedBy);
+				cmdLalLabs.Parameters.AddWithValue("@CollectionCharges", patient.HomeCollection.CollectionCharges);
+				cmdLalLabs.Parameters.AddWithValue("@CollectionAddress", patient.HomeCollection.CollectionAddress);
+				cmdLalLabs.Parameters.AddWithValue("@Barcode", patient.Barcode);
+				cmdLalLabs.Parameters.AddWithValue("@PaymentMode", patient.Payment.PaymentMode);
+				cmdLalLabs.Parameters.AddWithValue("@TotalAmount", patient.Payment.TotalAmount);
+				cmdLalLabs.Parameters.AddWithValue("@Discount", patient.Payment.Discount);
+				cmdLalLabs.Parameters.AddWithValue("@DiscountAmount", patient.Payment.DiscountAmount);
+				cmdLalLabs.Parameters.AddWithValue("@NetAmount", patient.Payment.NetAmount);
+				cmdLalLabs.Parameters.AddWithValue("@PaidAmount", patient.Payment.PaidAmount);
+				cmdLalLabs.Parameters.AddWithValue("@BalanceAmount", patient.Payment.BalanceAmount);
+				cmdLalLabs.Parameters.AddWithValue("@AddedBy", patient.AddedBy);
+				cmdLalLabs.Parameters.AddWithValue("@CreatedOn", patient.CreatedOn);
+				cmdLalLabs.Parameters.AddWithValue("@ModifiedOn", patient.ModifiedOn);
+
+
+				SqlParameter UpdatedId = new SqlParameter();
+				UpdatedId.ParameterName = "@UpdatedId";
+				UpdatedId.Direction = System.Data.ParameterDirection.Output;
+				UpdatedId.SqlDbType = System.Data.SqlDbType.BigInt;
+				cmdLalLabs.Parameters.Add(UpdatedId);
+
+				cmdLalLabs.ExecuteNonQuery();
+				long status = (long)UpdatedId.Value;
+
+				cmdLalLabs = new SqlCommand("DeleteTestDetailsByPatientId", conLalLabs);
+				cmdLalLabs.CommandType = CommandType.StoredProcedure;
+				cmdLalLabs.Parameters.AddWithValue("@PatientId", patient.PatientId);
+				cmdLalLabs.ExecuteNonQuery();
+
+				foreach (TestDetails test in patient.Tests)
+				{
+					cmdLalLabs = new SqlCommand("SaveTestDetails", conLalLabs);
+					cmdLalLabs.CommandType = CommandType.StoredProcedure;
+					cmdLalLabs.Parameters.AddWithValue("@PatientId", status);
+					cmdLalLabs.Parameters.AddWithValue("@TestId", test.TestId);
+					cmdLalLabs.Parameters.AddWithValue("@TestName", test.TestName);
+					cmdLalLabs.Parameters.AddWithValue("@TestPrice", test.TestPrice);
+					cmdLalLabs.Parameters.AddWithValue("@TestCode", test.TestCode);
+					cmdLalLabs.ExecuteNonQuery();
+				}
+
+				return status;
+			}
+
+			catch (SqlException e)
+			{
+				Console.WriteLine("Error Generated. Details: " + e.ToString());
+			}
+
+
+			finally
+			{
+				conLalLabs.Close();
+			}
+
+			return 0;
+		}
+
+		public void UpdateTest(TestDetails test)
+		{
+			try
+			{
+				conLalLabs.Open();
+				cmdLalLabs = new SqlCommand("UpdateTest", conLalLabs);
+				cmdLalLabs.CommandType = CommandType.StoredProcedure;
+				cmdLalLabs.Parameters.AddWithValue("@TestId", test.TestId);
+				cmdLalLabs.Parameters.AddWithValue("@TestName", test.TestName);
+				cmdLalLabs.Parameters.AddWithValue("@TestPrice", test.TestPrice);
+				cmdLalLabs.Parameters.AddWithValue("@TestCode", test.TestCode);
+
+				cmdLalLabs.ExecuteNonQuery();
+			}
+			catch (SqlException e)
+			{
+				Console.WriteLine("Error Generated. Details: " + e.ToString());
+			}
+			finally
+			{
+				conLalLabs.Close();
+			}
+		}
 	}
 	
 }

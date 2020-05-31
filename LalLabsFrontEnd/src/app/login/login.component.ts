@@ -27,27 +27,24 @@ export class LoginComponent {
     this._loginService.LoginValidation(this.login).subscribe(
       data => {
         this.status = data
-        this.reRoute(this.status);
-      })
-  }
-
-  reRoute(status) {
-
-    if (status == true) {
-      this._loginService.GetUserRole(this.login).subscribe(data => {
-        let userRole = data;
-        sessionStorage.setItem("userRole", userRole);
+        if (this.status == true) {
+          this._loginService.GetUserRole(this.login).subscribe(data => {
+            let userRole = data;
+            sessionStorage.setItem("userRole", userRole);
+            this.isLoggedIn = "true";
+            sessionStorage.setItem("isLoggedIn", this.isLoggedIn);
+            sessionStorage.setItem("userName", this.login.userName);
+            this._route.navigate(['admin'], { replaceUrl: true });
+          });
+        }
+        else
+        {
+          this.loginFail = true;
+          this._route.navigate(['login'], { replaceUrl: true });
+        }
       });
-      this.isLoggedIn = "true";
-      sessionStorage.setItem("isLoggedIn", this.isLoggedIn);
-      sessionStorage.setItem("userName", this.login.userName);
-      this._route.navigate(['admin'], { replaceUrl: true });
-    }
-
-    else {
-      this.loginFail = true;
-      this._route.navigate(['login'], { replaceUrl: true });
-    }
-
   }
+
+
 }
+

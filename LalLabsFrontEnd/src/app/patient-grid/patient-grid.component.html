@@ -33,6 +33,18 @@
         <mat-cell *matCellDef="let PatientDetails"> {{PatientDetails.Phone}} </mat-cell>
       </ng-container>
 
+      <!-- Age Column -->
+      <ng-container matColumnDef="Age">
+        <mat-header-cell *matHeaderCellDef> Age </mat-header-cell>
+        <mat-cell *matCellDef="let PatientDetails"> {{PatientDetails.Age}} </mat-cell>
+      </ng-container>
+
+      <!-- Barcode Column -->
+      <ng-container matColumnDef="Barcode">
+        <mat-header-cell *matHeaderCellDef> Barcode </mat-header-cell>
+        <mat-cell *matCellDef="let PatientDetails"> {{PatientDetails.Barcode}} </mat-cell>
+      </ng-container>
+
       <!-- DoctorName Column -->
       <ng-container matColumnDef="DoctorName">
         <mat-header-cell *matHeaderCellDef> Doctor Name </mat-header-cell>
@@ -42,13 +54,13 @@
       <!-- TotalAmount Column -->
       <ng-container matColumnDef="TotalAmount">
         <mat-header-cell *matHeaderCellDef> Total Amount </mat-header-cell>
-        <mat-cell *matCellDef="let PatientDetails"> {{PatientDetails.TotalAmount}} </mat-cell>
+        <mat-cell *matCellDef="let PatientDetails"> {{PatientDetails.Payment.TotalAmount}} </mat-cell>
       </ng-container>
 
       <!-- BalanceAmount Column -->
       <ng-container matColumnDef="BalanceAmount">
         <mat-header-cell *matHeaderCellDef> Balance Amount </mat-header-cell>
-        <mat-cell *matCellDef="let PatientDetails" style="justify-content:center; text-align:center" [ngStyle]="{'background-color': PatientDetails.BalanceAmount>0 ? 'red' : 'green'}"> {{PatientDetails.BalanceAmount}} </mat-cell>
+        <mat-cell *matCellDef="let PatientDetails" style="justify-content:center; text-align:center" [ngStyle]="{'background-color': PatientDetails.Payment.BalanceAmount>0 ? 'red' : 'green'}"> {{PatientDetails.Payment.BalanceAmount}} </mat-cell>
       </ng-container>
 
       <!-- CheckBox Column-->
@@ -74,8 +86,15 @@
       <ng-container matColumnDef="expandedDetail">
         <mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length" class="example-element-detail"
                   [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-          {{element.CreatedOn}}
-          <button mat-raised-button color="primary" (click)="UpdatePatient(element.PatientId)">Update Patient</button>
+          <span class="text text-primary" style="margin-right:2px">Tests:</span>
+          <span *ngFor="let test of element.Tests" style="margin:2px">{{test.TestName}}</span>
+          <span class="text text-primary" style="margin-right:2px; margin-left:10px">Home Collection:</span>
+          <span *ngIf="element.Home">Yes</span>
+          <span *ngIf="!element.Home">No</span>
+          <span *ngIf="element.Address" class="text text-primary" style="margin-right:2px; margin-left:10px">Address:</span>
+          <span>{{element.Address}}</span>
+
+          <button *ngIf="admin" mat-raised-button color="primary" style="margin-left:10px" (click)="UpdatePatient(element.PatientId)">Update Patient</button>
         </mat-cell>
       </ng-container>
 

@@ -2,18 +2,18 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { throwError, Observable } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
-import { GetPatientDetails } from '../models/get-patient-details';
+import { PatientDetails } from './patient-details';
 
 @Injectable()
 export class PatientGridService {
 
-  endpoint = 'http://localhost:64878/api/patient';
+  endpoint = 'http://localhost:64878/api/patient/';
 
   constructor(private _http: HttpClient) { }
 
-  PatientGrid(AddedBy: string): Observable<GetPatientDetails[]> {
+  PatientGrid(AddedBy: string): Observable<PatientDetails[]> {
     let param = new HttpParams().set('AddedBy', AddedBy);
-    return this._http.get<GetPatientDetails[]>(this.endpoint + '/PatientGrid', { params: param }).pipe(
+    return this._http.get<PatientDetails[]>(this.endpoint + 'PatientGrid', { params: param }).pipe(
       catchError(this.handleError)
     );
 

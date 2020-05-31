@@ -39,6 +39,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatRadioModule } from '@angular/material/radio';
 import { PhoneService } from './patient-registration/phone-service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { TestManagementComponent } from './test-management/test-management.component';
+import { TestManagementService } from './test-management/test-management.service';
+import { DialogTestManagementComponent } from './dialog-test-management/dialog-test-management.component';
 
 @NgModule({
   declarations: [
@@ -51,9 +54,11 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     WelcomeComponent,
     PageNotFoundComponent,
     DialogSavePatientComponent,
-    PatientGridComponent
+    PatientGridComponent,
+    TestManagementComponent,
+    DialogTestManagementComponent
   ],
-  entryComponents: [DialogSavePatientComponent],
+  entryComponents: [DialogSavePatientComponent, DialogTestManagementComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -83,7 +88,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MatRadioModule,
     MatAutocompleteModule
   ],
-  providers: [LoginService, PatientService, PatientGridService, TestService, PhoneService],
+  providers: [LoginService, PatientService, PatientGridService, TestService, PhoneService, TestManagementService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

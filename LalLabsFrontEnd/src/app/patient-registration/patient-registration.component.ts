@@ -1,16 +1,16 @@
-import { Component, DoCheck, OnInit} from '@angular/core';
-import { PatientDetails } from './patient-details';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, DoCheck, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, Data } from '@angular/router';
 import { PatientService } from './patient-service';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatTableDataSource } from '@angular/material';
 import { DialogSavePatientComponent } from '../dialog-save-patient/dialog-save-patient.component';
-import { GetPatientDetails } from '../models/get-patient-details';
-import { TestPrice } from './test-price';
 import { TestService } from './test-service';
 import { PhoneService } from './phone-service';
 import { FormControl, NgForm } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
+import { SelectionModel } from '@angular/cdk/collections';
+import { PatientDetails } from './patient-details';
+import { TestDetails } from './test-details';
 
 
 @Component({
@@ -18,11 +18,10 @@ import { startWith, map } from 'rxjs/operators';
   templateUrl: './patient-registration.component.html',
   styleUrls: ['./patient-registration.component.css']
 })
-export class PatientRegistrationComponent implements OnInit, DoCheck{
+export class PatientRegistrationComponent implements OnInit, DoCheck {
 
   mode: string;
   patient = new PatientDetails();
-  testPrices: TestPrice[] = [];
   years: number;
   months: number;
   days: number;
@@ -30,7 +29,12 @@ export class PatientRegistrationComponent implements OnInit, DoCheck{
   panelOpenState = false;
   myControl = new FormControl();
   options: string[] = [];
+  previousRecords: PatientDetails[] = [];
   filteredOptions: Observable<string[]>;
+  displayedColumns: string[] = ['select', 'TestName', 'TestCode', 'TestPrice'];
+  dataSource = new MatTableDataSource<TestDetails>();
+  selection = new SelectionModel<TestDetails>(true, []);
+  
   constructor(private _route: Router, private _patientService: PatientService, private _testService: TestService,
     private _phoneService: PhoneService, private _dialog: MatDialog, private _aRoute: ActivatedRoute) { }
 
@@ -40,14 +44,16 @@ export class PatientRegistrationComponent implements OnInit, DoCheck{
       this.CalculateAge();
 
     this.patient.Payment.TotalAmount = 0;
-    if (this.patient.HomeCollection.CollectionCharges)
+    if (this.patient.HomeCollection && this.patient.HomeCollection.CollectionCharges)
       this.patient.Payment.TotalAmount += parseInt(this.patient.HomeCollection.CollectionCharges.toString());
 
-    if (this.testPrices.length > 0) {
-      if (this.patient.Tests.Malaria)
-        this.patient.Payment.TotalAmount += this.testPrices[0].TestPrice;
-      if (this.patient.Tests.Typhoid)
-        this.patient.Payment.TotalAmount += this.testPrices[1].TestPrice;
+    if(this.patient.Home == false && this.patient.HomeCollection.CollectionCharges > 0)
+      this.patient.Payment.TotalAmount -= this.patient.HomeCollection.CollectionCharges;
+
+    if (this.selection.selected.length > 0) {
+      for (var test of this.selection.selected) {
+        this.patient.Payment.TotalAmount += test.TestPrice;
+      }
     }
 
     if (this.patient.Payment.Discount && this.patient.Payment.TotalAmount)
@@ -65,17 +71,27 @@ export class PatientRegistrationComponent implements OnInit, DoCheck{
       this._route.navigate(['login'], { replaceUrl: true });
     let id = parseInt(this._aRoute.snapshot.paramMap.get('id'));
     if (id) {
+      if (sessionStorage.getItem('userRole') != 'admin')
+        this._route.navigate(['pageNotFound'], { replaceUrl: true });
       this.mode = "update";
-      let tempArray: GetPatientDetails[];
       this._patientService.GetPatient(id).subscribe(data => {
-        tempArray = data;
-        let tempObj = tempArray[0];
-        this.initializePatient(tempObj);
+        this.patient = data;
+        this.patient.Tests = data.Tests;
+        this.myControl.setValue(this.patient.Phone);
       });
     }
 
     this._testService.GetTestPrice().subscribe(data => {
-      this.testPrices = data;
+      this.dataSource.data = data;
+      if (this.mode == "update" || this.mode=="previous") {
+        /* let testCodeArray = []; 
+        for (var test of this.patient.Tests) {
+          testCodeArray.push(test.TestCode);
+        }
+        this.selection = new SelectionModel<TestDetails>(true, [...this.dataSource.data.filter(row => testCodeArray.includes(row.TestCode))]); */
+        this.selection = new SelectionModel<TestDetails>(true, [...this.dataSource.data.filter(row => JSON.stringify(this.patient.Tests).includes(JSON.stringify(row)))]);
+        
+      }
     });
 
     this._phoneService.GetAllPhones().subscribe(data => {
@@ -90,40 +106,36 @@ export class PatientRegistrationComponent implements OnInit, DoCheck{
       );
   }
 
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected() ?
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
+  }
+
+  checkboxLabel(row?: TestDetails): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.TestCode}`;
+  }
+
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
 
     return this.options.filter(option => option.toLowerCase().includes(filterValue));
   }
 
-  initializePatient(tempObj) {
-    this.myControl.setValue(tempObj.Phone);
-    this.patient.Title = tempObj.Title;
-    this.patient.FirstName = tempObj.FirstName;
-    this.patient.MiddleName = tempObj.MiddleName;
-    this.patient.LastName = tempObj.LastName;
-    this.patient.Age = tempObj.Age;
-    this.patient.DateOfBirth = tempObj.DateOfBirth;
-    this.patient.Email = tempObj.Email;
-    this.patient.Address = tempObj.Address;
-    this.patient.DoctorName = tempObj.DoctorName;
-    this.patient.BarCode = tempObj.Barcode;
-    this.patient.Home = tempObj.HomeCollection;
-
-    this.patient.HomeCollection.CollectionDate = tempObj.CollectionDate;
-    this.patient.HomeCollection.CollectedBy = tempObj.CollectedBy;
-    this.patient.HomeCollection.CollectionAddress = tempObj.CollectionAddress;
-    this.patient.HomeCollection.CollectionCharges = tempObj.CollectionCharges;
-
-    this.patient.Tests.Malaria = tempObj.Malaria;
-    this.patient.Tests.Typhoid = tempObj.Typhoid;
-
-    this.patient.Payment.PaymentMode = tempObj.PaymentMode;
-    this.patient.Payment.Discount = tempObj.Discount;
-    this.patient.Payment.PaidAmount = tempObj.PaidAmount;
-    this.patient.AddedBy = tempObj.AddedBy;
-    this.patient.CreatedOn = tempObj.CreatedOn;
-    this.patient.ModifiedOn = tempObj.ModifiedOn;
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   SavePatient(form: NgForm) {
@@ -131,11 +143,14 @@ export class PatientRegistrationComponent implements OnInit, DoCheck{
     this.patient.Phone = this.myControl.value;
     this.patient.AddedBy = sessionStorage.getItem("userName");
     this.patient.CreatedOn = new Date();
+    this.patient.CreatedOn.setHours(new Date().getHours() + 5);
     this.patient.Age = this.years.toString() + "Years " + this.months.toString() + "Months " + this.days.toString() + "Days";
+    this.patient.Tests = this.selection.selected;
     var patientId: number;
     this._patientService.SavePatient(this.patient).subscribe(
       data => {
         form.reset();
+        this.patient.Payment.DiscountAmount = 0;
         patientId = data as number;
         this.OpenDialog(patientId);
       })
@@ -143,7 +158,7 @@ export class PatientRegistrationComponent implements OnInit, DoCheck{
 
   OpenDialog(patientId) {
 
-    let dialogRef = this._dialog.open(DialogSavePatientComponent, { data: { id: patientId } });
+    let dialogRef = this._dialog.open(DialogSavePatientComponent, { data: { id: patientId, mode: this.mode } });
 
   }
 
@@ -181,54 +196,44 @@ export class PatientRegistrationComponent implements OnInit, DoCheck{
     this.days = dayDiff;
   }
 
-  FilterTests(event: any) {
-  // Declare variables
-  var input, filter, table, tr, i, txtValue;
-  input = document.getElementById("searchTest");
-  filter = input.value.toUpperCase();
-  table = document.getElementById("testsTable");
-  tr = table.getElementsByTagName("tr");
-
-  // Loop through all table rows, and hide those who don't match the search query
-    for(i = 0; i < tr.length; i++) {
-      var firstColumn = tr[i].getElementsByTagName("td")[0];
-      var secondColumn = tr[i].getElementsByTagName("td")[1];
-      if (firstColumn || secondColumn) {
-        var txtValue1 = firstColumn.textContent || firstColumn.innerText;
-        var txtValue2 = secondColumn.textContent || secondColumn.innerText;
-        if ((txtValue1.toUpperCase().indexOf(filter) > -1) || (txtValue2.toUpperCase().indexOf(filter) > -1)) {
-          tr[i].style.display = "";
-        } else {
-          tr[i].style.display = "none";
-        }
-      }
-    }
-  }
-
   phoneChange(form: NgForm) {
     if (this.myControl.valueChanges && this.myControl.value != null) {
       this._phoneService.GetPatientByPhone(this.myControl.value as string).subscribe(data => {
-        let tempArray: GetPatientDetails[];
-        tempArray = data;
-        if (tempArray) {
-          if (tempArray.length) {
-            let tempObj = tempArray[tempArray.length - 1];
-            this.initializePatientByPhone(tempObj);
-          }
-          else
-            form.reset();
-        }
+        this.previousRecords = data;
       });
     }
   }
 
-  initializePatientByPhone(tempObj) {
-    this.patient.Title = tempObj.Title;
-    this.patient.FirstName = tempObj.FirstName;
-    this.patient.MiddleName = tempObj.MiddleName;
-    this.patient.LastName = tempObj.LastName;
-    this.patient.DateOfBirth = tempObj.DateOfBirth;
-    this.patient.Address = tempObj.Address;
-    this.patient.Email = tempObj.Email;
+  InitializePatientByPhone(id) {
+    this._patientService.GetPatient(id).subscribe(data => {
+      this.patient = data;
+      this.mode = "previous";
+      this.previousRecords = [];
+      this.ngOnInit();
+    })
+  }
+
+  UpdatePatient(form: NgForm) {
+    this.patient.Phone = this.myControl.value as string;
+    this.patient.ModifiedOn = new Date();
+    this.patient.ModifiedOn.setHours(new Date().getHours() + 5);
+    this.patient.Age = this.years.toString() + "Years " + this.months.toString() + "Months " + this.days.toString() + "Days";
+    this.patient.Tests = this.selection.selected;
+    var updatedId: number;
+    this._patientService.UpdatePatient(this.patient).subscribe(
+      data => {
+        form.reset();
+        this.patient.Payment.DiscountAmount = 0;
+        updatedId = data as number;
+        this.OpenDialog(updatedId);
+      })
+  }
+
+  changeDateOfBirth() {
+    this.patient.DateOfBirth.setDate(this.patient.DateOfBirth.getDate() + 1);
+  }
+
+  changeCollectionDate() {
+    this.patient.HomeCollection.CollectionDate.setDate(this.patient.HomeCollection.CollectionDate.getDate() + 1);
   }
 }

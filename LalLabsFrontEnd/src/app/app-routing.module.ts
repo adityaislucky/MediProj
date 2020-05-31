@@ -6,6 +6,7 @@ import { PatientRegistrationComponent } from './patient-registration/patient-reg
 import { WelcomeComponent } from './welcome/welcome.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { PatientGridComponent } from './patient-grid/patient-grid.component';
+import { TestManagementComponent } from './test-management/test-management.component';
 
 
 const routes: Routes = [
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'welcome', component: WelcomeComponent },
   { path: 'pageNotFound', component: PageNotFoundComponent },
   { path: 'patientGrid', component: PatientGridComponent },
+  { path: 'testManagement', component: TestManagementComponent },
   { path: '', component: WelcomeComponent },
   { path: '**', redirectTo: '/pageNotFound' }];
 
