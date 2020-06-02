@@ -44,5 +44,20 @@ namespace LalLabsWebService.Controllers
                 Console.WriteLine("Error Generated. Details: " + e.ToString());
             }
         }
+
+        [HttpPost]
+        public void AddTest(TestDetails test)
+        {
+            try
+            {
+                DataAccessLayer obj = new DataAccessLayer();
+                obj.AddTest(test);
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine("Error Generated. Details: " + e.ToString());
+            }
+        }
     }
 }

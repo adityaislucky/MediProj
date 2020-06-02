@@ -1,25 +1,55 @@
-<h2 mat-dialog-title style="background-color:cornflowerblue; text-align:center">Edit Test</h2>
+<div *ngIf="update">
+  <h2 mat-dialog-title style="background-color:cornflowerblue; text-align:center">Update Test</h2>
 
-<mat-dialog-content style="text-align:center">
-  <form #testForm="ngForm">
-    <mat-form-field>
-      <mat-label>Test Name</mat-label>
-      <input matInput name="testName" [(ngModel)]="test.TestName" required>
-    </mat-form-field>
-    <br>
-    <mat-form-field>
-      <mat-label>Test Code</mat-label>
-      <input matInput name="testCode" [(ngModel)]="test.TestCode" required>
-    </mat-form-field>
-    <br>
-    <mat-form-field>
-      <mat-label>Test Price (in Rs.)</mat-label>
-      <input matInput name="testPrice" [(ngModel)]="test.TestPrice" type="number" required>
-    </mat-form-field>
-    <br>
-  </form>
-</mat-dialog-content>
-<mat-dialog-actions>
-  <button mat-button color="primary" mat-dialog-close style="width:50%" [mat-dialog-close]="test" [disabled]="!testForm.valid">Update</button>
-  <button mat-button color="primary" mat-dialog-close [mat-dialog-close]>Cancel</button>
-</mat-dialog-actions>
+  <mat-dialog-content style="text-align:center">
+    <form #testForm="ngForm">
+      <mat-form-field>
+        <mat-label>Test Name</mat-label>
+        <input matInput name="testName" [(ngModel)]="test.TestName" required>
+      </mat-form-field>
+      <br>
+      <mat-form-field>
+        <mat-label>Test Code</mat-label>
+        <input matInput name="testCode" [(ngModel)]="test.TestCode" required>
+      </mat-form-field>
+      <br>
+      <mat-form-field>
+        <mat-label>Test Price (in Rs.)</mat-label>
+        <input matInput name="testPrice" [(ngModel)]="test.TestPrice" type="number" required>
+      </mat-form-field>
+      <br>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button color="primary" mat-dialog-close style="width:50%" [mat-dialog-close]="test" [disabled]="!testForm.valid">Update</button>
+    <button mat-button color="primary" mat-dialog-close [mat-dialog-close]>Cancel</button>
+  </mat-dialog-actions>
+</div>
+
+<div *ngIf="add">
+  <h2 mat-dialog-title style="background-color:cornflowerblue; text-align:center">Add Test</h2>
+
+  <mat-dialog-content style="text-align:center">
+    <form #testForm="ngForm">
+      <mat-form-field>
+        <mat-label>Test Name</mat-label>
+        <input matInput name="testName" [(ngModel)]="test.TestName" required>
+      </mat-form-field>
+      <br>
+      <mat-form-field>
+        <mat-label>Test Code</mat-label>
+        <input matInput name="testCode" [(ngModel)]="test.TestCode" required>
+      </mat-form-field>
+      <br>
+      <mat-form-field>
+        <mat-label>Test Price (in Rs.)</mat-label>
+        <input matInput name="testPrice" [(ngModel)]="test.TestPrice" type="number" required>
+      </mat-form-field>
+      <br>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button color="primary" mat-dialog-close style="width:50%" [mat-dialog-close]="test" [disabled]="!testForm.valid">Add</button>
+    <button mat-button color="primary" mat-dialog-close [mat-dialog-close]>Cancel</button>
+  </mat-dialog-actions>
+</div>

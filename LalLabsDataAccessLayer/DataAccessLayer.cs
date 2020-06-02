@@ -550,6 +550,29 @@ namespace LalLabsDataAccessLayer
 				conLalLabs.Close();
 			}
 		}
+
+		public void AddTest(TestDetails test)
+		{
+			try
+			{
+				conLalLabs.Open();
+				cmdLalLabs = new SqlCommand("AddTest", conLalLabs);
+				cmdLalLabs.CommandType = CommandType.StoredProcedure;
+				cmdLalLabs.Parameters.AddWithValue("@TestName", test.TestName);
+				cmdLalLabs.Parameters.AddWithValue("@TestPrice", test.TestPrice);
+				cmdLalLabs.Parameters.AddWithValue("@TestCode", test.TestCode);
+
+				cmdLalLabs.ExecuteNonQuery();
+			}
+			catch (SqlException e)
+			{
+				Console.WriteLine("Error Generated. Details: " + e.ToString());
+			}
+			finally
+			{
+				conLalLabs.Close();
+			}
+		}
 	}
 	
 }
