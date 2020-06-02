@@ -12,6 +12,7 @@ import { DialogTestManagementComponent } from '../dialog-test-management/dialog-
 })
 export class TestManagementComponent implements OnInit {
 
+  update = false;
   tests: TestDetails[] = [];
   constructor(private _route: Router, private _testManagementService: TestManagementService,
     public dialog: MatDialog, private _snackBar: MatSnackBar) { }
@@ -27,17 +28,42 @@ export class TestManagementComponent implements OnInit {
     });
   }
 
-  EditTest(test: TestDetails): void {
+  UpdateTest(test: TestDetails): void {
     const dialogRef = this.dialog.open(DialogTestManagementComponent, {
       width: '250px',
-      data: { test: test, mode: "edit" }
+      data: { test: test, mode: "update" }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this._testManagementService.UpdateTest(test).subscribe();
+      if (result)
+        this._testManagementService.UpdateTest(result).subscribe();
+
+      this._snackBar.open("Test Updated Successfully..!!", "Close", {
+         duration: 2000,
+        });
     });
 
   }
-  
 
+  ShowUpdate() {
+    this.update = true;
+  }
+
+  AddTest() {
+    const dialogRef = this.dialog.open(DialogTestManagementComponent, {
+      width: '250px',
+      data: { mode: "add" }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result)
+        this._testManagementService.AddTest(result).subscribe();
+      this._snackBar.open("Test Added Successfully..!!", "Close", {
+        duration: 2000,
+      });
+      this._route.navigateByUrl('admin', { skipLocationChange: true }).then(() => {
+          this._route.navigate(['testManagement']);
+        }); 
+    });
+  }
 }

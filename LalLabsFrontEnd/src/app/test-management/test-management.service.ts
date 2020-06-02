@@ -24,7 +24,11 @@ export class TestManagementService {
     );
   }
 
-
+  AddTest(test: TestDetails): any {
+    return this._http.post(this.endpoint + 'AddTest', test).pipe(
+      catchError(this.handleError)
+    );
+  }
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

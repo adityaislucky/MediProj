@@ -10,7 +10,7 @@ import { TestDetails } from './test-details';
 })
 export class DialogTestManagementComponent implements OnInit {
 
-  edit = false;
+  update = false;
   add = false;
   test: TestDetails = new TestDetails();
   constructor(private _route: Router, private _dialogRef: MatDialogRef<DialogTestManagementComponent>,
@@ -23,10 +23,13 @@ export class DialogTestManagementComponent implements OnInit {
       this._route.navigate(['login'], { replaceUrl: true });
     if (sessionStorage.getItem("userRole") != "admin")
       this._route.navigate(['pageNotFound'], { replaceUrl: true });
-    if (this.data.mode == "edit") {
-      this.edit = true;
+    if (this.data.mode == "update") {
+      this.update = true;
       this.test = this.data.test;
-    }  
+    }
+    if (this.data.mode == "add") {
+      this.add = true;
+    }
   
   }
 
