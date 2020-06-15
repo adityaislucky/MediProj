@@ -28,19 +28,27 @@ export class TestManagementComponent implements OnInit {
     });
   }
 
-  UpdateTest(test: TestDetails): void {
+  UpdateTest(test: TestDetails){
     const dialogRef = this.dialog.open(DialogTestManagementComponent, {
       width: '250px',
       data: { test: test, mode: "update" }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result)
-        this._testManagementService.UpdateTest(result).subscribe();
-
-      this._snackBar.open("Test Updated Successfully..!!", "Close", {
-         duration: 2000,
+      if (result) {
+        this._testManagementService.UpdateTest(result).subscribe(data => {
+          if (data == 1) {
+            this._snackBar.open("Test Updated Successfully..!!", "Close", {
+              duration: 2000,
+            });
+          }
+          else if (data == 0) {
+            this._snackBar.open("Some Error Occured..!!", "Close", {
+              duration: 2000,
+            });
+          }
         });
+      }
     });
 
   }
@@ -56,14 +64,26 @@ export class TestManagementComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result)
-        this._testManagementService.AddTest(result).subscribe();
-      this._snackBar.open("Test Added Successfully..!!", "Close", {
-        duration: 2000,
-      });
-      this._route.navigateByUrl('admin', { skipLocationChange: true }).then(() => {
-          this._route.navigate(['testManagement']);
-        }); 
+      if (result) {
+        this._testManagementService.AddTest(result).subscribe(data => {
+          if (data == 1) {
+            this._snackBar.open("Test Added Successfully..!!", "Close", {
+              duration: 2000,
+            });
+            this._route.navigateByUrl('admin', { skipLocationChange: true }).then(() => {
+              this._route.navigate(['testManagement']);
+            }); 
+          }
+          else if (data == 0) {
+            this._snackBar.open("Some Error Occured..!!", "Close", {
+              duration: 2000,
+            });
+            this._route.navigateByUrl('admin', { skipLocationChange: true }).then(() => {
+              this._route.navigate(['testManagement']);
+            }); 
+          }
+        });
+      }
     });
   }
 }

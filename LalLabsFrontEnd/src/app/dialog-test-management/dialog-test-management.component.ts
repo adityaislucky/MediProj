@@ -29,8 +29,13 @@ export class DialogTestManagementComponent implements OnInit {
     }
     if (this.data.mode == "add") {
       this.add = true;
-    }
-  
+    }  
+  }
+
+  Cancel() {
+    this._route.navigateByUrl('admin', { skipLocationChange: true }).then(() => {
+      this._route.navigate(['testManagement']);
+    }); 
   }
 
 }

@@ -41,6 +41,14 @@
            <button *ngIf="admin" mat-raised-button color="primary" style="width:200px" routerLink="/testManagement">Tests Management</button>
          </mat-card-content>
 
+         <mat-card-content style="text-align:center">
+           <button *ngIf="admin" mat-raised-button color="primary" style="width:200px" routerLink="/salesReport">Sales Report</button>
+         </mat-card-content>
+
+         <mat-card-content style="text-align:center">
+           <button mat-raised-button color="primary" style="width:200px" (click)="TodaySales()">Today Sales</button>
+         </mat-card-content>
+
        </mat-card>
      </div>
 

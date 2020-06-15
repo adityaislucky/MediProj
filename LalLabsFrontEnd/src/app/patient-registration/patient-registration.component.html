@@ -79,7 +79,7 @@
 
             <mat-form-field>
               <mat-label>Date of Birth</mat-label>
-              <input matInput [max]="maxDate" [matDatepicker]="dob" name="dateofbirth" #dateofbirth="ngModel" [(ngModel)]="patient.DateOfBirth" (dateChange)="changeDateOfBirth()" required>
+              <input matInput [max]="maxDate" [matDatepicker]="dob" name="dateofbirth" #dateofbirth="ngModel" [(ngModel)]="patient.DateOfBirth" (ngModelChange)="DateOfBirthChanged()" required>
               <mat-datepicker-toggle matSuffix [for]="dob"></mat-datepicker-toggle>
               <mat-datepicker #dob startView="year"></mat-datepicker>
             </mat-form-field>
@@ -165,7 +165,7 @@
         <span>
           <mat-form-field *ngIf="patient.Home" style="width:20%">
             <mat-label>Collection Date</mat-label>
-            <input matInput [max]="maxDate" [matDatepicker]="cd" name="collectionDate" [(ngModel)]="patient.HomeCollection.CollectionDate" (dateChange)="changeCollectionDate()">
+            <input matInput [min]="minDate" [matDatepicker]="cd" name="collectionDate" [(ngModel)]="patient.HomeCollection.CollectionDate" (ngModelChange)="DateOfCollectionChanged()">
             <mat-datepicker-toggle matSuffix [for]="cd"></mat-datepicker-toggle>
             <mat-datepicker #cd></mat-datepicker>
           </mat-form-field>
@@ -178,7 +178,7 @@
 
           <mat-form-field *ngIf="patient.Home" style="width:20%">
             <mat-label>Charges (in Rs.)</mat-label>
-            <input matInput name="collectionCharges" [(ngModel)]="patient.HomeCollection.CollectionCharges">
+            <input matInput name="collectionCharges" [(ngModel)]="patient.HomeCollection.CollectionCharges" pattern="^[0-9]*(\.[0-9]{0,2})?$">
           </mat-form-field>
 
           <mat-form-field *ngIf="patient.Home" style="width:60%; margin-left:20%">
@@ -298,7 +298,7 @@
 
         <mat-form-field>
           <mat-label>Paid Amount (in Rs)</mat-label>
-          <input matInput name="paidamount" #paidamount="ngModel" [(ngModel)]="patient.Payment.PaidAmount" required pattern="^[0-9]*$">
+          <input matInput name="paidamount" #paidamount="ngModel" [(ngModel)]="patient.Payment.PaidAmount" required pattern="^[0-9]*(\.[0-9]{0,2})?$">
         </mat-form-field>
         <mat-error *ngIf="paidamount.invalid && paidamount.touched">Mandatory Field</mat-error>
         <mat-error *ngIf="paidamount.touched && paidamount.value>patient.NetAmount">Paid Amount greater than Net Amount</mat-error>
@@ -317,9 +317,9 @@
 </form>
 
 
-  <div *ngIf="!mode" class="fixedFooter">
+  <div *ngIf="save" class="fixedFooter">
     <button mat-raised-button color="primary" (click)="SavePatient(patientRegistration)" [disabled]="patientRegistration.form.invalid || !patient.Title">Save Details</button>
   </div>
-  <div *ngIf="mode" class="fixedFooter">
+  <div *ngIf="update" class="fixedFooter">
     <button mat-raised-button color="primary" (click)="UpdatePatient(patientRegistration)" [disabled]="patientRegistration.form.invalid || patientRegistration.form.untouched">Update Details</button>
   </div>

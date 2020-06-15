@@ -35,7 +35,7 @@ export class PatientGridComponent implements OnInit{
   ngOnInit() {
     if (!(sessionStorage.getItem("isLoggedIn")))
       this._route.navigate(['login'], { replaceUrl: true });
-    this._patientService.PatientGrid(sessionStorage.getItem("userName")).subscribe(data => {
+    this._patientService.PatientGrid().subscribe(data => {
       this.dataSource.data = data;
       this.dataSource.paginator = this.paginator;
       if (sessionStorage.getItem('userRole') != 'admin') {
@@ -45,13 +45,21 @@ export class PatientGridComponent implements OnInit{
         this.admin = true;
       }
       this.displayAge();
+      this.displayAddress();
+      this.displayMail();
     })
   }
 
   maskValues() {
     for (var temp of this.dataSource.data) {
       temp.Phone = temp.Phone.replace(/\d(?!\d{0,3}$)/gi, "X");
-    }
+      if (temp.Email != "") {
+        let email = temp.Email;
+        var hide = email.split("@")[0];
+        var show = email.split("@")[1];
+        hide = hide[0] + hide.slice(1).replace(/.(?!$)/g, '*')
+        temp.Email = hide + "@" + show;
+      }}
   }
 
   UpdatePatient(PatientId: number) {
@@ -87,7 +95,7 @@ export class PatientGridComponent implements OnInit{
         tempArray.push(patient.PatientId);
       }
       var tempDataSource = new MatTableDataSource<PatientDetails>();
-      this._patientService.PatientGrid(sessionStorage.getItem("userName")).subscribe(data => {
+      this._patientService.PatientGrid().subscribe(data => {
         tempDataSource.data = data;
         for (var patient of tempDataSource.data) {
           if (tempArray.indexOf(patient.PatientId)>=0) {
@@ -105,22 +113,27 @@ export class PatientGridComponent implements OnInit{
   }
 
   displayAge() {
-    /*for (var temp of this.dataSource.data) {
+    for (var temp of this.dataSource.data) {
       var age = temp.Age.split(" ");
-      var years = age[0];
-      var months = age[1];
-      var days = age[2];
-      if (years == "0Years") {
-        if (months == "0Months") {
-          temp.Age = days;
-        }
-        else
-          temp.Age = months;
-      }
-      else
-        temp.Age = years;
+      var years = age[0].split("e")[0];
+      var months = age[1].split("o")[0];
+      var days = age[2].split("a")[0];
+      temp.Age = years + '-' + months + '-' + days;
     }
-    */
+  }
+
+  displayAddress() {
+    for (var temp of this.dataSource.data) {
+      if (temp.Address == "")
+        temp.Address = "No Data";
+    }
+  }
+
+  displayMail() {
+    for (var temp of this.dataSource.data) {
+      if (temp.Email == "")
+        temp.Email = "No Data";
+    }
   }
 }
 

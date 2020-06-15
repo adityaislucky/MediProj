@@ -15,14 +15,14 @@
       <br>
       <mat-form-field>
         <mat-label>Test Price (in Rs.)</mat-label>
-        <input matInput name="testPrice" [(ngModel)]="test.TestPrice" type="number" required>
+        <input matInput name="testPrice" [(ngModel)]="test.TestPrice" type="number" pattern="^[0-9]*(\.[0-9]{0,2})?$" required>
       </mat-form-field>
       <br>
     </form>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button color="primary" mat-dialog-close style="width:50%" [mat-dialog-close]="test" [disabled]="!testForm.valid">Update</button>
-    <button mat-button color="primary" mat-dialog-close [mat-dialog-close]>Cancel</button>
+    <button mat-button color="primary" mat-dialog-close (click)="Cancel()">Cancel</button>
   </mat-dialog-actions>
 </div>
 
@@ -43,13 +43,13 @@
       <br>
       <mat-form-field>
         <mat-label>Test Price (in Rs.)</mat-label>
-        <input matInput name="testPrice" [(ngModel)]="test.TestPrice" type="number" required>
+        <input matInput name="testPrice" [(ngModel)]="test.TestPrice" type="number" pattern="^[0-9]*(\.[0-9]{0,2})?$" required>
       </mat-form-field>
       <br>
     </form>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button color="primary" mat-dialog-close style="width:50%" [mat-dialog-close]="test" [disabled]="!testForm.valid">Add</button>
-    <button mat-button color="primary" mat-dialog-close [mat-dialog-close]>Cancel</button>
+    <button mat-button color="primary" mat-dialog-close (click)="Cancel()">Cancel</button>
   </mat-dialog-actions>
 </div>

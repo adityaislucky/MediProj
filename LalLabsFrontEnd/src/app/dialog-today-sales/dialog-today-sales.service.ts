@@ -1,33 +1,21 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { throwError, Observable } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
-import { TestDetails } from './test-details';
-
+import { TodaySalesModel } from './today-sales-model';
 
 @Injectable()
-export class TestManagementService {
+export class TodaySalesService {
 
-  endpoint = 'http://localhost:64878/api/test/';
+  endpoint = 'http://localhost:64878/api/sales/';
 
   constructor(private _http: HttpClient) { }
 
-  GetTestPrice(): Observable<TestDetails[]> {
-    return this._http.get<TestDetails[]>(this.endpoint + 'GetTestPrice').pipe(
+  SalesReport(): Observable<TodaySalesModel> {
+    return this._http.get<TodaySalesModel>(this.endpoint + 'TodaySales').pipe(
       catchError(this.handleError)
     );
-  }
 
-  UpdateTest(test: TestDetails): Observable<number> {
-    return this._http.post<number>(this.endpoint + 'UpdateTest', test).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  AddTest(test: TestDetails): Observable<number> {
-    return this._http.post<number>(this.endpoint + 'AddTest', test).pipe(
-      catchError(this.handleError)
-    );
   }
 
   private handleError(error: HttpErrorResponse) {

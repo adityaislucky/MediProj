@@ -31,12 +31,12 @@ namespace LalLabsWebService.Controllers
         }
 
         [HttpGet]
-        public PatientDetails[] PatientGrid(string AddedBy)
+        public PatientDetails[] PatientGrid()
         {
             try
             {
                 DataAccessLayer obj = new DataAccessLayer();
-                PatientDetails[] Patients = obj.PatientGrid(AddedBy);
+                PatientDetails[] Patients = obj.PatientGrid();
                 return Patients;
             }
 
