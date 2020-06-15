@@ -1,0 +1,74 @@
+<div class="container" style="max-width:100%; text-align:center; padding:10px">
+  <h2>Sales Report</h2><br />
+  <div>
+    <form #dateForm ="ngForm">
+      <mat-form-field>
+        <mat-label>From Date</mat-label>
+        <input matInput [max]="maxDate" [matDatepicker]="fromDate" name="fromDate" #fromDate="ngModel" [(ngModel)]="FromDate" required>
+        <mat-datepicker-toggle matSuffix [for]="fromDate"></mat-datepicker-toggle>
+        <mat-datepicker #fromDate></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field style="margin-left:20px">
+        <mat-label>To Date</mat-label>
+        <input matInput [max]="maxDate" [matDatepicker]="toDate" name="toDate" #toDate="ngModel" [(ngModel)]="ToDate" required>
+        <mat-datepicker-toggle matSuffix [for]="toDate"></mat-datepicker-toggle>
+        <mat-datepicker #toDate></mat-datepicker>
+      </mat-form-field>
+    </form>
+   </div>
+  <button mat-button mat-raised-button color="primary" (click)="DateSubmit(dateForm)" [disabled]="dateForm.form.invalid">Go</button>
+
+  <div *ngIf="Submit" style="margin-top:15px">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <!-- Date Column -->
+      <ng-container matColumnDef="CreatedOn">
+        <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+        <mat-cell *matCellDef="let record"> {{record.CreatedOn | date}} </mat-cell>
+        <mat-footer-cell *matFooterCellDef> Total (in Rs.)</mat-footer-cell>
+      </ng-container>
+
+      <!-- Total Amount Column -->
+      <ng-container matColumnDef="TotalAmount">
+        <mat-header-cell *matHeaderCellDef> Total Amount (in Rs.)</mat-header-cell>
+        <mat-cell *matCellDef="let record"> {{record.TotalAmount}} </mat-cell>
+        <mat-footer-cell *matFooterCellDef> {{getTotalAmount()}} </mat-footer-cell>
+      </ng-container>
+
+      <!-- Discount Amount Column -->
+      <ng-container matColumnDef="DiscountAmount">
+        <mat-header-cell *matHeaderCellDef> Discount Amount (in Rs.)</mat-header-cell>
+        <mat-cell *matCellDef="let record"> {{record.DiscountAmount}} </mat-cell>
+        <mat-footer-cell *matFooterCellDef> {{getDiscountAmount()}} </mat-footer-cell>
+      </ng-container>
+
+      <!-- Net Amount Column -->
+      <ng-container matColumnDef="NetAmount">
+        <mat-header-cell *matHeaderCellDef> Net Amount (in Rs.)</mat-header-cell>
+        <mat-cell *matCellDef="let record"> {{record.NetAmount}} </mat-cell>
+        <mat-footer-cell *matFooterCellDef> {{getNetAmount()}} </mat-footer-cell>
+      </ng-container>
+
+      <!-- Paid Amount Column -->
+      <ng-container matColumnDef="PaidAmount">
+        <mat-header-cell *matHeaderCellDef> Paid Amount (in Rs.)</mat-header-cell>
+        <mat-cell *matCellDef="let record"> {{record.PaidAmount}} </mat-cell>
+        <mat-footer-cell *matFooterCellDef> {{getPaidAmount()}} </mat-footer-cell>
+      </ng-container>
+
+      <!-- Balance Amount Column -->
+      <ng-container matColumnDef="BalanceAmount">
+        <mat-header-cell *matHeaderCellDef> Balance Amount (in Rs.)</mat-header-cell>
+        <mat-cell *matCellDef="let record"> {{record.BalanceAmount}} </mat-cell>
+        <mat-footer-cell *matFooterCellDef> {{getBalanceAmount()}} </mat-footer-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+    </table>
+  </div>
+
+  <div *ngIf="Submit" style="margin: 20px; text-align:center">
+    <button mat-button mat-raised-button color="primary" (click)="ViewSalesGraph()">View Sales Graph</button>
+  </div>
+</div>

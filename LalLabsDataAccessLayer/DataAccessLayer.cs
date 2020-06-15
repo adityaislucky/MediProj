@@ -154,14 +154,13 @@ namespace LalLabsDataAccessLayer
 			return 0;
 		}
 
-		public PatientDetails[] PatientGrid(string AddedBy)
+		public PatientDetails[] PatientGrid()
 		{
 			try
 			{
 				conLalLabs.Open();
 				cmdLalLabs = new SqlCommand("PatientGrid", conLalLabs);
 				cmdLalLabs.CommandType = CommandType.StoredProcedure;
-				cmdLalLabs.Parameters.AddWithValue("@AddedBy", AddedBy);
 				SqlDataAdapter da = new SqlDataAdapter(cmdLalLabs);
 				DataTable dt = new DataTable();
 				da.Fill(dt);
@@ -299,7 +298,7 @@ namespace LalLabsDataAccessLayer
 			return null;
 		}
 
-		public DataTable GetTestPrice()
+		public TestDetails[] GetTestPrice()
 		{
 			cmdLalLabs = new SqlCommand("GetTestPrice", conLalLabs);
 			DataTable dt = new DataTable();
@@ -309,7 +308,17 @@ namespace LalLabsDataAccessLayer
 				cmdLalLabs.CommandType = CommandType.StoredProcedure;
 				SqlDataAdapter da = new SqlDataAdapter(cmdLalLabs);
 				da.Fill(dt);
-				return dt;
+				List<TestDetails> tests = new List<TestDetails>();
+				foreach(DataRow row in dt.Rows)
+				{
+					TestDetails test = new TestDetails();
+					test.TestId = (Int32)row["TestId"];
+					test.TestCode = row["TestCode"].ToString();
+					test.TestName = row["TestName"].ToString();
+					test.TestPrice = (decimal)row["TestPrice"];
+					tests.Add(test);
+				}
+				return tests.ToArray();
 			}
 			catch (SqlException e)
 			{
@@ -527,7 +536,7 @@ namespace LalLabsDataAccessLayer
 			return 0;
 		}
 
-		public void UpdateTest(TestDetails test)
+		public Int32 UpdateTest(TestDetails test)
 		{
 			try
 			{
@@ -538,8 +547,12 @@ namespace LalLabsDataAccessLayer
 				cmdLalLabs.Parameters.AddWithValue("@TestName", test.TestName);
 				cmdLalLabs.Parameters.AddWithValue("@TestPrice", test.TestPrice);
 				cmdLalLabs.Parameters.AddWithValue("@TestCode", test.TestCode);
-
+				SqlParameter returnParameter = cmdLalLabs.Parameters.Add("RetVal", SqlDbType.Int);
+				returnParameter.Direction = ParameterDirection.ReturnValue;
 				cmdLalLabs.ExecuteNonQuery();
+				int status = (int)returnParameter.Value;
+				cmdLalLabs.ExecuteNonQuery();
+				return status;
 			}
 			catch (SqlException e)
 			{
@@ -549,9 +562,10 @@ namespace LalLabsDataAccessLayer
 			{
 				conLalLabs.Close();
 			}
+			return 0;
 		}
 
-		public void AddTest(TestDetails test)
+		public Int32 AddTest(TestDetails test)
 		{
 			try
 			{
@@ -561,8 +575,11 @@ namespace LalLabsDataAccessLayer
 				cmdLalLabs.Parameters.AddWithValue("@TestName", test.TestName);
 				cmdLalLabs.Parameters.AddWithValue("@TestPrice", test.TestPrice);
 				cmdLalLabs.Parameters.AddWithValue("@TestCode", test.TestCode);
-
+				SqlParameter returnParameter = cmdLalLabs.Parameters.Add("RetVal", SqlDbType.Int);
+				returnParameter.Direction = ParameterDirection.ReturnValue;
 				cmdLalLabs.ExecuteNonQuery();
+				int status = (int)returnParameter.Value;
+				return status;
 			}
 			catch (SqlException e)
 			{
@@ -572,6 +589,55 @@ namespace LalLabsDataAccessLayer
 			{
 				conLalLabs.Close();
 			}
+			return 0;
+		}
+
+		public DataTable SalesReport(DateTime FromDate, DateTime ToDate)
+		{
+			try
+			{
+				cmdLalLabs = new SqlCommand("SalesReport", conLalLabs);
+				cmdLalLabs.Parameters.AddWithValue("@FromDate", FromDate);
+				cmdLalLabs.Parameters.AddWithValue("@ToDate", ToDate);
+				DataTable dt = new DataTable();
+				conLalLabs.Open();
+				cmdLalLabs.CommandType = CommandType.StoredProcedure;
+				SqlDataAdapter da = new SqlDataAdapter(cmdLalLabs);
+				da.Fill(dt);
+				return dt;
+			}
+			catch (SqlException e)
+			{
+				Console.WriteLine("Error Generated. Details: " + e.ToString());
+			}
+			finally
+			{
+				conLalLabs.Close();
+			}
+			return null;
+		}
+
+		public DataTable TodaySales()
+		{
+			cmdLalLabs = new SqlCommand("TodaySales", conLalLabs);
+			DataTable dt = new DataTable();
+			try
+			{
+				conLalLabs.Open();
+				cmdLalLabs.CommandType = CommandType.StoredProcedure;
+				SqlDataAdapter da = new SqlDataAdapter(cmdLalLabs);
+				da.Fill(dt);
+				return dt;
+			}
+			catch (SqlException e)
+			{
+				Console.WriteLine("Error Generated. Details: " + e.ToString());
+			}
+			finally
+			{
+				conLalLabs.Close();
+			}
+			return null;
 		}
 	}
 	

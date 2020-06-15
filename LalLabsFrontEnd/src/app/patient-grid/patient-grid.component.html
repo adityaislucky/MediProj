@@ -91,8 +91,10 @@
           <span class="text text-primary" style="margin-right:2px; margin-left:10px">Home Collection:</span>
           <span *ngIf="element.Home">Yes</span>
           <span *ngIf="!element.Home">No</span>
-          <span *ngIf="element.Address" class="text text-primary" style="margin-right:2px; margin-left:10px">Address:</span>
+          <span class="text text-primary" style="margin-right:2px; margin-left:10px">Address:</span>
           <span>{{element.Address}}</span>
+          <span class="text text-primary" style="margin-right:2px; margin-left:10px">Email:</span>
+          <span>{{element.Email}}</span>
 
           <button *ngIf="admin" mat-raised-button color="primary" style="margin-left:10px" (click)="UpdatePatient(element.PatientId)">Update Patient</button>
         </mat-cell>

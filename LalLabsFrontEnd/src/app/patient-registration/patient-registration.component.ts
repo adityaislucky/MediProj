@@ -21,11 +21,16 @@ import { TestDetails } from './test-details';
 export class PatientRegistrationComponent implements OnInit, DoCheck {
 
   mode: string;
+  update = false;
+  save = false;
   patient = new PatientDetails();
   years: number;
   months: number;
   days: number;
+  dobChanged = false;
+  docChanged = false;
   maxDate = new Date(new Date().setDate(new Date().getDate()));
+  minDate = new Date(new Date().setDate(new Date().getDate()));
   panelOpenState = false;
   myControl = new FormControl();
   options: string[] = [];
@@ -45,10 +50,10 @@ export class PatientRegistrationComponent implements OnInit, DoCheck {
 
     this.patient.Payment.TotalAmount = 0;
     if (this.patient.HomeCollection && this.patient.HomeCollection.CollectionCharges)
-      this.patient.Payment.TotalAmount += parseInt(this.patient.HomeCollection.CollectionCharges.toString());
+      this.patient.Payment.TotalAmount += parseFloat(this.patient.HomeCollection.CollectionCharges.toString());
 
-    if(this.patient.Home == false && this.patient.HomeCollection.CollectionCharges > 0)
-      this.patient.Payment.TotalAmount -= this.patient.HomeCollection.CollectionCharges;
+    if (this.patient.Home == false && this.patient.HomeCollection.CollectionCharges > 0)
+      this.patient.Payment.TotalAmount -= parseFloat(this.patient.HomeCollection.CollectionCharges.toString());
 
     if (this.selection.selected.length > 0) {
       for (var test of this.selection.selected) {
@@ -57,11 +62,11 @@ export class PatientRegistrationComponent implements OnInit, DoCheck {
     }
 
     if (this.patient.Payment.Discount && this.patient.Payment.TotalAmount)
-      this.patient.Payment.DiscountAmount = (this.patient.Payment.Discount) * (this.patient.Payment.TotalAmount) * 0.01;
+      this.patient.Payment.DiscountAmount = Math.round((this.patient.Payment.Discount) * (this.patient.Payment.TotalAmount) * 0.01);
     if (this.patient.Payment.DiscountAmount || this.patient.Payment.DiscountAmount == 0)
-       this.patient.Payment.NetAmount = this.patient.Payment.TotalAmount - this.patient.Payment.DiscountAmount;
+      this.patient.Payment.NetAmount = parseFloat((this.patient.Payment.TotalAmount - this.patient.Payment.DiscountAmount).toString());
     if (this.patient.Payment.PaidAmount)
-      this.patient.Payment.BalanceAmount = this.patient.Payment.NetAmount - this.patient.Payment.PaidAmount;
+      this.patient.Payment.BalanceAmount = parseFloat((this.patient.Payment.NetAmount - this.patient.Payment.PaidAmount).toFixed(2));
     
   }
 
@@ -74,12 +79,16 @@ export class PatientRegistrationComponent implements OnInit, DoCheck {
       if (sessionStorage.getItem('userRole') != 'admin')
         this._route.navigate(['pageNotFound'], { replaceUrl: true });
       this.mode = "update";
+      this.update = true;
       this._patientService.GetPatient(id).subscribe(data => {
         this.patient = data;
         this.patient.Tests = data.Tests;
         this.myControl.setValue(this.patient.Phone);
       });
     }
+
+    else
+      this.save = true;
 
     this._testService.GetTestPrice().subscribe(data => {
       this.dataSource.data = data;
@@ -90,7 +99,6 @@ export class PatientRegistrationComponent implements OnInit, DoCheck {
         }
         this.selection = new SelectionModel<TestDetails>(true, [...this.dataSource.data.filter(row => testCodeArray.includes(row.TestCode))]); */
         this.selection = new SelectionModel<TestDetails>(true, [...this.dataSource.data.filter(row => JSON.stringify(this.patient.Tests).includes(JSON.stringify(row)))]);
-        
       }
     });
 
@@ -146,6 +154,10 @@ export class PatientRegistrationComponent implements OnInit, DoCheck {
     this.patient.CreatedOn.setHours(new Date().getHours() + 5);
     this.patient.Age = this.years.toString() + "Years " + this.months.toString() + "Months " + this.days.toString() + "Days";
     this.patient.Tests = this.selection.selected;
+    if (this.dobChanged)
+      this.changeDateOfBirth();
+    if (this.docChanged && this.patient.HomeCollection.CollectionDate != null)
+      this.changeCollectionDate();
     var patientId: number;
     this._patientService.SavePatient(this.patient).subscribe(
       data => {
@@ -219,6 +231,10 @@ export class PatientRegistrationComponent implements OnInit, DoCheck {
     this.patient.ModifiedOn.setHours(new Date().getHours() + 5);
     this.patient.Age = this.years.toString() + "Years " + this.months.toString() + "Months " + this.days.toString() + "Days";
     this.patient.Tests = this.selection.selected;
+    if (this.dobChanged)
+      this.changeDateOfBirth();
+    if (this.docChanged && this.patient.HomeCollection.CollectionDate != null)
+      this.changeCollectionDate();
     var updatedId: number;
     this._patientService.UpdatePatient(this.patient).subscribe(
       data => {
@@ -235,5 +251,13 @@ export class PatientRegistrationComponent implements OnInit, DoCheck {
 
   changeCollectionDate() {
     this.patient.HomeCollection.CollectionDate.setDate(this.patient.HomeCollection.CollectionDate.getDate() + 1);
+  }
+
+  DateOfBirthChanged() {
+    this.dobChanged = true;
+  }
+
+  DateOfCollectionChanged() {
+    this.docChanged = true;
   }
 }

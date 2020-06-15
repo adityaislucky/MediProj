@@ -1,0 +1,32 @@
+<h2 mat-dialog-title style="background-color:cornflowerblue; text-align:center">Today's Sales Details</h2>
+<br />
+<div *ngIf="todaySales"class="container">
+  <table class="table">
+    <tbody>
+      <tr>
+        <td>Total Amount</td>
+        <td>Rs. {{todaySales.TotalAmount}}</td>
+      </tr>
+      <tr>
+        <td>Discount Amount</td>
+        <td>Rs. {{todaySales.DiscountAmount}}</td>
+      </tr>
+      <tr>
+        <td>Net Amount</td>
+        <td>Rs. {{todaySales.NetAmount}}</td>
+      </tr>
+      <tr>
+        <td>Paid Amount</td>
+        <td>Rs. {{todaySales.PaidAmount}}</td>
+      </tr>
+      <tr>
+        <td>Balance Amount</td>
+        <td>Rs. {{todaySales.BalanceAmount}}</td>
+      </tr>
+    </tbody>
+  </table>
+  <br />
+  <div style="text-align:center">
+    <button mat-button style="background-color:cornflowerblue" [mat-dialog-close]="true">Close</button>
+  </div>
+</div>

@@ -42,6 +42,13 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { TestManagementComponent } from './test-management/test-management.component';
 import { TestManagementService } from './test-management/test-management.service';
 import { DialogTestManagementComponent } from './dialog-test-management/dialog-test-management.component';
+import { SalesReportComponent } from './sales-report/sales-report.component';
+import { SalesReportService } from './sales-report/sales-report.service';
+import { GoogleChartsModule } from 'angular-google-charts';
+import { DialogSalesGraphComponent } from './dialog-sales-graph/dialog-sales-graph.component';
+import { DatePipe } from '@angular/common';
+import { DialogTodaySalesComponent } from './dialog-today-sales/dialog-today-sales.component';
+import { TodaySalesService } from './dialog-today-sales/dialog-today-sales.service';
 
 @NgModule({
   declarations: [
@@ -56,9 +63,12 @@ import { DialogTestManagementComponent } from './dialog-test-management/dialog-t
     DialogSavePatientComponent,
     PatientGridComponent,
     TestManagementComponent,
-    DialogTestManagementComponent
+    DialogTestManagementComponent,
+    SalesReportComponent,
+    DialogSalesGraphComponent,
+    DialogTodaySalesComponent,
   ],
-  entryComponents: [DialogSavePatientComponent, DialogTestManagementComponent],
+  entryComponents: [DialogSavePatientComponent, DialogTestManagementComponent, DialogSalesGraphComponent, DialogTodaySalesComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -86,9 +96,10 @@ import { DialogTestManagementComponent } from './dialog-test-management/dialog-t
     MatExpansionModule,
     MatMenuModule,
     MatRadioModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    GoogleChartsModule
   ],
-  providers: [LoginService, PatientService, PatientGridService, TestService, PhoneService, TestManagementService],
+  providers: [DatePipe, LoginService, PatientService, PatientGridService, TestService, PhoneService, TestManagementService, SalesReportService, TodaySalesService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -13,13 +13,12 @@ namespace LalLabsWebService.Controllers
     public class TestController : ApiController
     {
         [HttpGet]
-        public DataTable GetTestPrice()
+        public TestDetails[] GetTestPrice()
         {
             try
             {
                 DataAccessLayer obj = new DataAccessLayer();
-                DataTable dt = obj.GetTestPrice();
-                return dt;
+                return obj.GetTestPrice();
             }
 
             catch (Exception e)
@@ -31,33 +30,35 @@ namespace LalLabsWebService.Controllers
         }
 
         [HttpPost]
-        public void UpdateTest(TestDetails test)
+        public Int32 UpdateTest(TestDetails test)
         {
             try
             {
                 DataAccessLayer obj = new DataAccessLayer();
-                obj.UpdateTest(test);
+                return (obj.UpdateTest(test));
             }
 
             catch (Exception e)
             {
                 Console.WriteLine("Error Generated. Details: " + e.ToString());
             }
+            return 0;
         }
 
         [HttpPost]
-        public void AddTest(TestDetails test)
+        public Int32 AddTest(TestDetails test)
         {
             try
             {
                 DataAccessLayer obj = new DataAccessLayer();
-                obj.AddTest(test);
+                return (obj.AddTest(test));
             }
 
             catch (Exception e)
             {
                 Console.WriteLine("Error Generated. Details: " + e.ToString());
             }
+            return 0;
         }
     }
 }

@@ -82,10 +82,10 @@ namespace LalLabsDataAccessLayer
             return Patient;
         }
 
-        public static PatientDetails[] PatientGrid(string AddedBy)
+        public static PatientDetails[] PatientGrid()
         {
             DataAccessLayer obj = new DataAccessLayer();
-            PatientDetails[] patients = obj.PatientGrid(AddedBy);
+            PatientDetails[] patients = obj.PatientGrid();
             return patients;
         }
 

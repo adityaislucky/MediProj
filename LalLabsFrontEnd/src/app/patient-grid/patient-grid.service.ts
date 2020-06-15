@@ -11,15 +11,12 @@ export class PatientGridService {
 
   constructor(private _http: HttpClient) { }
 
-  PatientGrid(AddedBy: string): Observable<PatientDetails[]> {
-    let param = new HttpParams().set('AddedBy', AddedBy);
-    return this._http.get<PatientDetails[]>(this.endpoint + 'PatientGrid', { params: param }).pipe(
+  PatientGrid(): Observable<PatientDetails[]> {
+    return this._http.get<PatientDetails[]>(this.endpoint + 'PatientGrid').pipe(
       catchError(this.handleError)
     );
 
   }
-
-
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

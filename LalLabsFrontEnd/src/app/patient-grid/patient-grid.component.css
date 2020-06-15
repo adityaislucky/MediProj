@@ -19,3 +19,7 @@ mat-row.example-element-row:not(.example-expanded-row):active {
   overflow: hidden;
   display: flex;
 }
+
+.mat-table mat-row mat-cell {
+  padding: 0 20px 0 20px;
+}
